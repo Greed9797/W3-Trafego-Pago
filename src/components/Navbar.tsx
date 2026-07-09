@@ -6,7 +6,6 @@ import { BRAND_NAME, CTA_HREF } from '@/lib/constants'
 import logoW3 from '@/assets/logo-w3.svg'
 
 const NAV_ITEMS = [
-  { label: "Serviços", href: "#servicos" },
   { label: "Metodologia", href: "#metodologia" },
   { label: "Resultados", href: "#resultados" },
   { label: "Diagnóstico", href: "#depoimentos" },

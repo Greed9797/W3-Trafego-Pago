@@ -12,7 +12,7 @@ const STATS = [
   { value: "+20", label: "Nichos atendidos" },
 ]
 
-const PARTNERS = ["Meta Ads", "Google Ads", "TikTok Ads", "Pinterest Ads", "Shopee Ads", "Mercado Livre"]
+const PARTNERS = ["Meta Ads", "Google Ads"]
 
 export function Hero() {
   useEffect(() => {
@@ -57,7 +57,7 @@ export function Hero() {
       <div className="relative z-10 flex flex-col items-center text-center px-5 pt-24 pb-10 md:pt-32 md:pb-20 max-w-5xl mx-auto">
         <div className="hero-badge liquid-glass rounded-full px-3 py-1 md:px-4 md:py-1.5 mb-6 md:mb-8 inline-flex items-center gap-2 opacity-0">
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <span className="font-body text-[10px] md:text-xs text-foreground/80 tracking-wide uppercase">Agência parceira Meta · Google · TikTok</span>
+          <span className="font-body text-[10px] md:text-xs text-foreground/80 tracking-wide uppercase">Agência parceira Meta · Google</span>
         </div>
 
         <h1 className="hero-headline font-display font-bold text-[clamp(36px,7vw,104px)] leading-[0.95] tracking-[-0.03em] text-foreground max-w-[18ch] mb-4 md:mb-6">
@@ -106,7 +106,7 @@ export function Hero() {
 
       <div aria-hidden="true" className="relative z-10 w-full pb-8 md:pb-12 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
         <div className="flex animate-[marquee_32s_linear_infinite] gap-8 md:gap-12 w-max">
-          {[...PARTNERS, ...PARTNERS].map((p, i) => (
+          {Array(8).fill(PARTNERS).flat().map((p, i) => (
             <span key={i} className="font-display font-semibold text-base md:text-xl text-foreground/30 whitespace-nowrap tracking-tight">{p}</span>
           ))}
         </div>

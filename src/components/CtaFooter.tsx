@@ -27,7 +27,7 @@ export function CtaFooter() {
               </a>
             </Button>
             <Button variant="heroGlass" asChild>
-              <a href="#servicos">Ver nossos serviços</a>
+              <a href="#metodologia">Nossa metodologia</a>
             </Button>
           </div>
         </div>

@@ -7,12 +7,12 @@ const REASONS = [
   { icon: FileText, title: "Planejamento", body: "Analisamos os números do seu negócio: tráfego, site, concorrentes, comportamento do cliente. E transformamos tudo em um plano de ação claro. Você entende onde está perdendo dinheiro e o que precisa ajustar para crescer de forma previsível." },
   { icon: Zap, title: "Execução de Alta Performance", body: "Criamos cada campanha com base em nossas estruturas milionárias, validadas em e-commerces de diversos nichos. Da segmentação ao criativo, tudo é planejado e adaptado para funcionar nas individualidades do seu negócio." },
   { icon: BarChart2, title: "Organização", body: "Usamos sistemas e relatórios simples para acompanhar cada campanha, resultado e investimento. Assim, você tem clareza total sobre o retorno de cada real investido e transparência dos resultados." },
-  { icon: Handshake, title: "Relacionamento", body: "Na W3, você não fica no escuro. Nosso time te acompanha de perto todos os dias, com análises e ajustes constantes." },
+  { icon: Handshake, title: "Relacionamento", body: "Na W3, você não fica no escuro. Nosso time te acompanha de perto todos os dias, com análises e ajustes constantes. A nossa média de tempo de resposta no WhatsApp é menos de 10 minutos!" },
 ]
 
 const PROCESS_STEPS = [
-  { n: "01", title: "Diagnóstico Gratuito", body: "Auditamos suas campanhas atuais, identificamos onde está perdendo dinheiro e mapeamos as oportunidades reais de escala." },
-  { n: "02", title: "Estratégia e Onboarding", body: "Montamos o plano de mídia, estruturamos as campanhas do zero ou reestruturamos o que existe. Você aprova antes de ir ao ar." },
+  { n: "01", title: "Diagnóstico Gratuito", body: "Entendemos o cenário do seu e-commerce, identificamos os gargalos que impedem seu crescimento e mapeamos as oportunidades reais de escala." },
+  { n: "02", title: "Estratégia e Onboarding", body: "Montamos o plano de escala, estruturamos as campanhas do zero ou reestruturamos o que existe, auditamos seu site, frete, configurações e todo o necessário para você vender muito sem se preocupar." },
   { n: "03", title: "Gestão e Otimização", body: "Rodamos, medimos e otimizamos com acompanhamento próximo e ajustes constantes. Escalamos o que funciona, cortamos o que não converte." },
 ]
 

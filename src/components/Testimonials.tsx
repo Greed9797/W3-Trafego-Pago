@@ -8,7 +8,7 @@ import { CTA_HREF } from '@/lib/constants'
 // Copy real do site w3trafegopago.com.br (seção "Você já se perguntou...")
 const QUESTIONS = [
   'Se os seus anúncios estão realmente entregando todo o potencial do seu e-commerce?',
-  'Se o maior gargalo está no tráfego… ou em algo dentro do seu site?',
+  'Onde realmente está o maior gargalo do seu negócio…? Nas campanhas, criativos, site, frete, checkout…',
   'Por que o seu concorrente consegue mais resultado que você?',
 ]
 

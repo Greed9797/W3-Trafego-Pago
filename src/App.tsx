@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { Navbar } from '@/components/Navbar'
 import { Hero } from '@/components/Hero'
-import { ServicesBento } from '@/components/ServicesBento'
 import { Methodology } from '@/components/Methodology'
 import { Stats } from '@/components/Stats'
 import { Testimonials } from '@/components/Testimonials'
@@ -30,7 +29,6 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
-        <ServicesBento />
         <Methodology />
         <Stats />
         <Testimonials />
