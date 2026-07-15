@@ -11,30 +11,25 @@ interface Milestone {
 
 const MILESTONES: Milestone[] = [
   {
+    tag: 'O método',
+    title: 'Do zero ao topo vira método',
+    body: 'A estrutura que levou uma operação real ao topo do e-commerce é sistematizada em um método replicável — para donos de e-commerce que já faturam e querem escalar com margem.',
+    highlight: true,
+  },
+  {
     tag: '2024 · A origem',
     title: 'Nasce o Grupo W3',
     body: 'Fundado em Blumenau (SC) com um objetivo claro: ser o maior ecossistema de e-commerce do Brasil. Estrutura operacional de resultado, não de promessa.',
   },
   {
-    tag: 'O case-mãe',
-    title: 'Ame Kids, o laboratório real',
-    body: 'Cofundada por Leonardo Ames, chega ao 3º maior e-commerce de moda infantil do Brasil, com múltiplos 7 dígitos por ano. A operação validada na prática.',
-  },
-  {
-    tag: 'O método',
-    title: 'Do zero ao topo vira método',
-    body: 'A estrutura que levou a Ame Kids ao topo é sistematizada no método AMES — replicável para donos de e-commerce que já faturam e querem escalar com margem.',
-    highlight: true,
+    tag: 'Ecossistema',
+    title: 'Mais que tráfego: um ecossistema',
+    body: 'Marketplace e mais de 30 especialistas em operação nacional, com sede física em Blumenau e time 100% presente.',
   },
   {
     tag: 'Tráfego pago',
     title: 'Nasce a W3 Tráfego Pago',
     body: 'Gestão de mídia ponta a ponta: custo controlado, escala sustentável, estrutura de funil e ROAS consistente. Não é apertar botões — é vender ponta a ponta.',
-  },
-  {
-    tag: 'Ecossistema',
-    title: 'Mais que tráfego: um ecossistema',
-    body: 'Marketplace, Pagamentos (parceria Appmax) e mais de 30 especialistas em operação nacional, com sede física em Blumenau e time 100% presente.',
   },
   {
     tag: 'Hoje',
