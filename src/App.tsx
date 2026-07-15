@@ -4,6 +4,7 @@ import { Hero } from '@/components/Hero'
 import { Methodology } from '@/components/Methodology'
 import { Stats } from '@/components/Stats'
 import { Testimonials } from '@/components/Testimonials'
+import { SuccessCases } from '@/components/SuccessCases'
 import { Faq } from '@/components/Faq'
 import { CtaFooter } from '@/components/CtaFooter'
 import { gsap, ScrollTrigger } from '@/lib/gsap'
@@ -32,6 +33,7 @@ export default function App() {
         <Methodology />
         <Stats />
         <Testimonials />
+        <SuccessCases />
         <Faq />
         <CtaFooter />
       </main>
