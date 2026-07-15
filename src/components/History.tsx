@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { gsap } from '@/lib/gsap'
 import { SplitHeading } from './SplitHeading'
 
@@ -44,21 +44,43 @@ const MILESTONES: Milestone[] = [
   },
 ]
 
+const GAP = 20 // px, precisa casar com gap-5 do track
+
 export function History() {
+  const pinRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    const cards = gsap.utils.toArray('.milestone-card')
-    gsap.from(cards, {
-      opacity: 0,
-      yPercent: 20,
-      duration: 0.5,
-      ease: 'power2.out',
-      stagger: 0.08,
-      scrollTrigger: { trigger: '.timeline-grid', start: 'top 80%' },
-    })
+    const pin = pinRef.current
+    const track = trackRef.current
+    if (!pin || !track) return
+
+    const ctx = gsap.context(() => {
+      // Scroll horizontal fixado só no desktop (>=768px). Mobile usa swipe nativo.
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 768px)', () => {
+        const distance = () => track.scrollWidth - pin.offsetWidth
+        gsap.to(track, {
+          x: () => -distance(),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: pin,
+            start: 'center center',
+            end: () => `+=${distance()}`,
+            pin: true,
+            scrub: 1,
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+          },
+        })
+      })
+    }, pinRef)
+
+    return () => ctx.revert()
   }, [])
 
   return (
-    <section id="historia" className="relative py-16 md:py-24 bg-background" data-section="history">
+    <section id="historia" className="relative py-16 md:py-24 bg-background overflow-hidden" data-section="history">
       <div className="max-w-[var(--max)] mx-auto px-5 md:px-[var(--gutter)]">
         <div className="text-center mb-10 md:mb-16">
           <span className="liquid-glass rounded-full px-3 py-1 md:px-4 md:py-1.5 text-[10px] md:text-xs font-body uppercase tracking-widest text-foreground/60">
@@ -69,20 +91,27 @@ export function History() {
             className="mt-3 md:mt-4 font-display font-bold text-3xl md:text-4xl lg:text-5xl tracking-tight max-w-3xl mx-auto"
           />
         </div>
+      </div>
 
-        <div className="timeline-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 md:gap-5">
+      {/* Viewport fixado — no desktop trava e desliza os cards na horizontal */}
+      <div ref={pinRef} className="overflow-x-auto md:overflow-hidden">
+        <div
+          ref={trackRef}
+          className="flex gap-5 px-5 md:px-[var(--gutter)] snap-x snap-mandatory md:snap-none"
+          style={{ ['--gap' as string]: `${GAP}px` }}
+        >
           {MILESTONES.map((m, i) => (
             <div
               key={i}
-              className={`milestone-card liquid-glass rounded-2xl p-5 md:p-6 flex flex-col gap-3 ${m.highlight ? 'orange-glow' : ''}`}
+              className={`milestone-card liquid-glass rounded-2xl p-6 md:p-7 flex flex-col gap-3 shrink-0 snap-start w-[78vw] sm:w-[calc((100%-var(--gap))/2)] md:w-[340px] lg:w-[calc((100vw-2*var(--gutter)-3*var(--gap))/4)] min-h-[320px] md:min-h-[360px] ${m.highlight ? 'orange-glow' : ''}`}
             >
               <span
-                className={`font-display font-bold text-4xl md:text-5xl leading-none select-none ${m.highlight ? 'text-primary' : 'text-primary/20'}`}
+                className={`font-display font-bold text-5xl md:text-6xl leading-none select-none ${m.highlight ? 'text-primary' : 'text-primary/20'}`}
               >
                 {String(i + 1).padStart(2, '0')}
               </span>
               <span className="font-body text-[10px] md:text-xs font-semibold uppercase tracking-widest text-primary">{m.tag}</span>
-              <h3 className="font-display font-bold text-base md:text-lg tracking-tight leading-snug">{m.title}</h3>
+              <h3 className="font-display font-bold text-lg md:text-xl tracking-tight leading-snug">{m.title}</h3>
               <p className="font-body text-xs md:text-sm text-foreground/60 leading-relaxed">{m.body}</p>
             </div>
           ))}
