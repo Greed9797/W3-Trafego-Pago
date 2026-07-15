@@ -1,13 +1,16 @@
 import { useEffect } from 'react'
-import { FileText, Zap, BarChart2, Handshake } from 'lucide-react'
 import { gsap } from '@/lib/gsap'
 import { SplitHeading } from './SplitHeading'
+import metodologia1 from '@/assets/metodologia-1.jpg'
+import metodologia2 from '@/assets/metodologia-2.jpg'
+import metodologia3 from '@/assets/metodologia-3.jpg'
+import metodologia4 from '@/assets/metodologia-4.jpg'
 
 const REASONS = [
-  { icon: FileText, title: "Planejamento", body: "Analisamos os números do seu negócio: tráfego, site, concorrentes, comportamento do cliente. E transformamos tudo em um plano de ação claro. Você entende onde está perdendo dinheiro e o que precisa ajustar para crescer de forma previsível." },
-  { icon: Zap, title: "Execução de Alta Performance", body: "Criamos cada campanha com base em nossas estruturas milionárias, validadas em e-commerces de diversos nichos. Da segmentação ao criativo, tudo é planejado e adaptado para funcionar nas individualidades do seu negócio." },
-  { icon: BarChart2, title: "Organização", body: "Usamos sistemas e relatórios simples para acompanhar cada campanha, resultado e investimento. Assim, você tem clareza total sobre o retorno de cada real investido e transparência dos resultados." },
-  { icon: Handshake, title: "Relacionamento", body: "Na W3, você não fica no escuro. Nosso time te acompanha de perto todos os dias, com análises e ajustes constantes. A nossa média de tempo de resposta no WhatsApp é menos de 10 minutos!" },
+  { image: metodologia1, title: "Planejamento", body: "Analisamos os números do seu negócio: tráfego, site, concorrentes, comportamento do cliente. E transformamos tudo em um plano de ação claro. Você entende onde está perdendo dinheiro e o que precisa ajustar para crescer de forma previsível." },
+  { image: metodologia2, title: "Execução de Alta Performance", body: "Criamos cada campanha com base em nossas estruturas milionárias, validadas em e-commerces de diversos nichos. Da segmentação ao criativo, tudo é planejado e adaptado para funcionar nas individualidades do seu negócio." },
+  { image: metodologia3, title: "Organização", body: "Usamos sistemas e relatórios simples para acompanhar cada campanha, resultado e investimento. Assim, você tem clareza total sobre o retorno de cada real investido e transparência dos resultados." },
+  { image: metodologia4, title: "Relacionamento", body: "Na W3, você não fica no escuro. Nosso time te acompanha de perto todos os dias, com análises e ajustes constantes. A nossa média de tempo de resposta no WhatsApp é menos de 10 minutos!" },
 ]
 
 const PROCESS_STEPS = [
@@ -62,20 +65,20 @@ export function Methodology() {
         </div>
 
         <div className="reasons-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mt-10 md:mt-16">
-          {REASONS.map((r, i) => {
-            const Icon = r.icon
-            return (
-              <div key={i} className="reason-card liquid-glass rounded-2xl p-5 md:p-7 flex flex-col gap-3 md:gap-4">
-                <span className="font-display font-bold text-5xl md:text-6xl text-primary/20 leading-none select-none">{String(i + 1).padStart(2, '0')}</span>
-                <div className="liquid-glass rounded-full w-9 h-9 md:w-10 md:h-10 flex items-center justify-center">
-                  <Icon className="size-4 md:size-5 text-primary" />
-                </div>
+          {REASONS.map((r, i) => (
+            <div key={i} className="reason-card liquid-glass rounded-2xl overflow-hidden flex flex-col">
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <img src={r.image} alt={r.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+              </div>
+              <div className="p-5 md:p-6 flex flex-col gap-2.5 md:gap-3 -mt-8 relative">
+                <span className="font-display font-bold text-3xl md:text-4xl text-primary leading-none select-none">{`//${String(i + 1).padStart(2, '0')}`}</span>
                 <h3 className="font-display font-bold text-lg md:text-xl tracking-tight">{r.title}</h3>
                 <p className="font-body text-xs md:text-sm text-foreground/60 leading-relaxed">{r.body}</p>
-                <div className="mt-auto h-px w-12 bg-gradient-to-r from-primary to-transparent" />
+                <div className="mt-auto pt-1 h-px w-12 bg-gradient-to-r from-primary to-transparent" />
               </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
 
         <div id="como-funciona" className="mt-16 md:mt-24">
