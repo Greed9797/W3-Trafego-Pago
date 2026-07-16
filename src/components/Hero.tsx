@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import SplitType from 'split-type'
 import { Button } from '@/components/ui/button'
-import { DashboardMock } from '@/components/DashboardMock'
+import dashboardW3 from '@/assets/dashboard-w3.webp'
 import { gsap } from '@/lib/gsap'
 import { CTA_HREF } from '@/lib/constants'
 
@@ -99,7 +99,13 @@ export function Hero() {
             <span className="w-2.5 h-2.5 rounded-full bg-primary/60" />
           </div>
           <div className="rounded-lg md:rounded-xl border border-border/40 overflow-hidden">
-            <DashboardMock />
+            <img
+              src={dashboardW3}
+              alt="Painel de relatórios da W3 com faturamento, valor investido, custo de mídia e vendas por estado"
+              width={1600}
+              height={683}
+              className="w-full h-auto block"
+            />
           </div>
         </div>
       </div>
