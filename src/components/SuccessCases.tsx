@@ -3,6 +3,8 @@ import { TrendingUp, ArrowRight } from 'lucide-react'
 import { gsap } from '@/lib/gsap'
 import { SplitHeading } from './SplitHeading'
 import rosaDoDeserto from '@/assets/clientes/rosa-do-deserto.png'
+import theGregs from '@/assets/clientes/the-gregs.png'
+import brArtes from '@/assets/clientes/br-artes.png'
 
 interface SuccessCase {
   brand: string
@@ -21,6 +23,7 @@ const CASES: SuccessCase[] = [
     segment: 'Perfumaria',
     metric: '39x',
     metricLabel: 'de crescimento de faturamento com anúncios',
+    logo: theGregs,
   },
   {
     brand: 'GM Rosa do Deserto',
@@ -36,6 +39,7 @@ const CASES: SuccessCase[] = [
     metric: 'Triplicou',
     metricLabel: 'de faturamento em 2 meses',
     evidence: { from: 'R$ 14.770,63', to: 'R$ 67.424,68', period: 'abr/26 → jun/26' },
+    logo: brArtes,
   },
 ]
 
