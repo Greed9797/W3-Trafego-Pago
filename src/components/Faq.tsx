@@ -6,7 +6,7 @@ import { CTA_HREF } from '@/lib/constants'
 
 const FAQ_ITEMS = [
   { q: "Como começa o trabalho com a W3?", a: "Pelo planejamento. Analisamos os números do seu negócio — tráfego, site, concorrentes e comportamento do cliente — e transformamos tudo em um plano de ação claro antes de subir qualquer campanha." },
-  { q: "Com quais plataformas vocês trabalham?", a: "Meta Ads (Facebook e Instagram), Google Ads e TikTok Ads. As estruturas são montadas e adaptadas para o seu nicho e a realidade do seu e-commerce." },
+  { q: "Com quais plataformas vocês trabalham?", a: "Meta Ads (Facebook e Instagram) e Google Ads. As estruturas são montadas e adaptadas para o seu nicho e a realidade do seu e-commerce." },
   { q: "Como as campanhas são criadas?", a: "Com base em estruturas validadas em e-commerces de diversos nichos. Da segmentação ao criativo, tudo é planejado e adaptado para as individualidades do seu negócio." },
   { q: "Como acompanho os resultados?", a: "Com sistemas e relatórios simples para acompanhar cada campanha, resultado e investimento. Você tem clareza total sobre o retorno de cada real investido." },
   { q: "Vou ter acompanhamento de perto?", a: "Sim. Na W3 você não fica no escuro: nosso time acompanha de perto todos os dias, com análises e ajustes constantes." },
