@@ -3,7 +3,7 @@ import { CountUp } from './CountUp'
 
 const STATS = [
   { value: 200, prefix: "+R$", suffix: "M", label: "Gerados com anúncios", decimals: 0 },
-  { value: 100, prefix: "+", suffix: "", label: "Clientes satisfeitos", decimals: 0 },
+  { value: 100, prefix: "+", suffix: "", label: "E-commerces atendidos", decimals: 0 },
   { value: 20, prefix: "+", suffix: "", label: "Nichos atendidos", decimals: 0 },
 ]
 

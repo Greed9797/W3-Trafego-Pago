@@ -1,40 +1,41 @@
 import { useEffect } from 'react'
-import { TrendingUp, Quote } from 'lucide-react'
+import { TrendingUp, ArrowRight } from 'lucide-react'
 import { gsap } from '@/lib/gsap'
 import { SplitHeading } from './SplitHeading'
 import rosaDoDeserto from '@/assets/clientes/rosa-do-deserto.png'
-import soulHype from '@/assets/clientes/soul-hype.png'
-import candyStore from '@/assets/clientes/candy-store.png'
 
 interface SuccessCase {
-  logo: string
   brand: string
+  segment: string
   metric: string
   metricLabel: string
-  quote: string
+  /** Antes → depois extraído do painel do cliente. Omitido quando não há print. */
+  evidence?: { from: string; to: string; period: string }
+  logo?: string
 }
 
+// Dados da apresentação comercial da W3 — números reais dos painéis dos clientes.
 const CASES: SuccessCase[] = [
   {
-    logo: rosaDoDeserto,
+    brand: "The Greg's",
+    segment: 'Perfumaria',
+    metric: '39x',
+    metricLabel: 'de crescimento de faturamento com anúncios',
+  },
+  {
     brand: 'GM Rosa do Deserto',
-    metric: '20k',
-    metricLabel: 'por semana',
-    quote: 'Não estamos nem dando conta do trabalho. Continuamos em crescimento — passamos a bater 20 mil por semana com o tráfego rodando.',
+    segment: 'Flores',
+    metric: '+R$ 200K',
+    metricLabel: 'de faturamento mensal',
+    evidence: { from: 'R$ 199.038,32', to: 'R$ 406.165,90', period: 'mai/25 → mai/26' },
+    logo: rosaDoDeserto,
   },
   {
-    logo: soulHype,
-    brand: 'Soul Hype',
-    metric: '3,8x',
-    metricLabel: 'de ROI',
-    quote: 'Reestruturaram todas as campanhas do zero. Hoje a gente escala com previsibilidade e sabe exatamente quanto cada real investido volta.',
-  },
-  {
-    logo: candyStore,
-    brand: 'Candy Store',
-    metric: '+112%',
-    metricLabel: 'em faturamento',
-    quote: 'Saímos de vendas travadas para um crescimento constante. O acompanhamento diário e os ajustes de campanha mudaram o jogo.',
+    brand: 'BR Artes Decor',
+    segment: 'Quadros e decoração',
+    metric: 'Triplicou',
+    metricLabel: 'de faturamento em 2 meses',
+    evidence: { from: 'R$ 14.770,63', to: 'R$ 67.424,68', period: 'abr/26 → jun/26' },
   },
 ]
 
@@ -65,26 +66,46 @@ export function SuccessCases() {
         </div>
 
         <div className="cases-grid grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
-          {CASES.map((c, i) => (
-            <div key={i} className="case-card liquid-glass rounded-2xl p-6 md:p-7 flex flex-col gap-5">
-              <div className="flex items-center justify-between gap-4">
-                <div className="bg-white/95 rounded-xl px-3 py-2 flex items-center justify-center h-12 md:h-14">
-                  <img src={c.logo} alt={c.brand} className="max-h-8 md:max-h-10 w-auto object-contain" loading="lazy" />
-                </div>
-                <Quote className="size-6 text-primary/30 shrink-0" />
+          {CASES.map((c) => (
+            <div key={c.brand} className="case-card liquid-glass rounded-2xl p-6 md:p-7 flex flex-col gap-4">
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-body text-[10px] md:text-xs font-semibold uppercase tracking-widest text-primary">
+                  Case
+                </span>
+                {c.logo && (
+                  <div className="bg-white/95 rounded-lg px-2 py-1.5 flex items-center justify-center">
+                    <img src={c.logo} alt={c.brand} className="max-h-7 w-auto object-contain" loading="lazy" />
+                  </div>
+                )}
               </div>
 
-              <div className="flex items-end gap-2">
+              <div>
+                <h3 className="font-display font-bold text-lg md:text-xl tracking-tight leading-snug">{c.brand}</h3>
+                <p className="font-body text-xs md:text-sm text-foreground/50">{c.segment}</p>
+              </div>
+
+              <div className="mt-1">
                 <span className="font-display font-bold text-4xl md:text-5xl text-primary leading-none">{c.metric}</span>
-                <span className="font-body text-xs md:text-sm text-foreground/60 pb-1">{c.metricLabel}</span>
+                <p className="mt-2 font-body text-xs md:text-sm text-foreground/70 leading-relaxed">{c.metricLabel}</p>
               </div>
 
-              <p className="font-body text-sm md:text-base text-foreground/80 leading-relaxed">"{c.quote}"</p>
+              {c.evidence && (
+                <div className="mt-auto pt-4 border-t border-border/40">
+                  <div className="flex items-center gap-2 font-body text-xs md:text-sm">
+                    <span className="text-foreground/45 line-through decoration-foreground/25">{c.evidence.from}</span>
+                    <ArrowRight className="size-3.5 text-primary shrink-0" />
+                    <span className="text-foreground font-semibold">{c.evidence.to}</span>
+                  </div>
+                  <span className="mt-1 block font-body text-[10px] md:text-xs text-foreground/40">{c.evidence.period}</span>
+                </div>
+              )}
 
-              <div className="mt-auto flex items-center gap-2 pt-2">
-                <TrendingUp className="size-4 text-primary" />
-                <span className="font-body text-xs md:text-sm font-medium text-foreground/70">{c.brand}</span>
-              </div>
+              {!c.evidence && (
+                <div className="mt-auto pt-4 border-t border-border/40 flex items-center gap-2">
+                  <TrendingUp className="size-4 text-primary" />
+                  <span className="font-body text-xs md:text-sm text-foreground/60">Crescimento com tráfego pago</span>
+                </div>
+              )}
             </div>
           ))}
         </div>
