@@ -87,12 +87,12 @@ export function Methodology() {
             <SplitHeading text="Do diagnóstico à escala" className="mt-3 md:mt-4 font-display font-bold text-3xl md:text-4xl lg:text-5xl tracking-tight" />
           </div>
 
-          <div className="process-grid grid grid-cols-1 md:grid-cols-3 gap-0">
+          <div className="process-grid grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             {PROCESS_STEPS.map((step, i) => (
-              <div key={i} className={`process-step relative px-5 md:px-12 py-8 md:py-12 ${i < 2 ? 'border-b border-border/30 md:border-b-0 md:border-r' : ''}`}>
-                <span className="font-display font-bold text-7xl md:text-[120px] leading-none text-primary/15 select-none block">{step.n}</span>
-                <h3 className="font-display font-bold text-xl md:text-2xl tracking-tight mb-2 md:mb-3 relative z-10">{step.title}</h3>
-                <p className="font-body text-xs md:text-sm text-foreground/60 leading-relaxed max-w-[32ch]">{step.body}</p>
+              <div key={i} className={`process-step liquid-glass rounded-2xl p-6 md:p-7 flex flex-col gap-3 min-h-[280px] md:min-h-[320px] ${i === 2 ? 'orange-glow' : ''}`}>
+                <span className={`font-display font-bold text-5xl md:text-6xl leading-none select-none ${i === 2 ? 'text-primary' : 'text-primary/20'}`}>{step.n}</span>
+                <h3 className="font-display font-bold text-lg md:text-xl tracking-tight leading-snug">{step.title}</h3>
+                <p className="font-body text-xs md:text-sm text-foreground/60 leading-relaxed">{step.body}</p>
               </div>
             ))}
           </div>
