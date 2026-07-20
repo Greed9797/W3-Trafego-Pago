@@ -15,7 +15,7 @@ export function SplitHeading({
   className = '',
   as: Tag = 'h2',
   delay = 0,
-  animType = 'chars',
+  animType = 'words',
 }: Props) {
   const ref = useRef<HTMLElement>(null)
 

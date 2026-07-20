@@ -7,10 +7,4 @@ export const lenis = new Lenis({
   smoothWheel: true,
 })
 
-export function startLenis() {
-  function raf(time: number) {
-    lenis.raf(time)
-    requestAnimationFrame(raf)
-  }
-  requestAnimationFrame(raf)
-}
+// raf loop é dirigido pelo gsap.ticker em lib/gsap.ts — não há loop próprio aqui.

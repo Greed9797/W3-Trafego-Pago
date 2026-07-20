@@ -23,14 +23,15 @@ export function Hero() {
 
     const headlineEl = document.querySelector('.hero-headline')
     if (headlineEl) {
-      split = new SplitType(headlineEl as HTMLElement, { types: 'chars,words' })
-      tl.from(split.chars, {
+      // words (não chars): ~5x menos nós DOM = menos reflow forçado no load (corta TBT)
+      split = new SplitType(headlineEl as HTMLElement, { types: 'words' })
+      tl.from(split.words, {
         opacity: 0,
         yPercent: 100,
         rotateX: -30,
         duration: 0.6,
         ease: 'power3.out',
-        stagger: 0.018,
+        stagger: 0.06,
       })
     }
 
