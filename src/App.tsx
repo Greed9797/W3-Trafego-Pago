@@ -5,7 +5,6 @@ import { Methodology } from '@/components/Methodology'
 import { Stats } from '@/components/Stats'
 import { Testimonials } from '@/components/Testimonials'
 import { SuccessCases } from '@/components/SuccessCases'
-import { History } from '@/components/History'
 import { Faq } from '@/components/Faq'
 import { CtaFooter } from '@/components/CtaFooter'
 import { gsap, ScrollTrigger } from '@/lib/gsap'
@@ -32,7 +31,6 @@ export default function App() {
       <main>
         <Hero />
         <Methodology />
-        <History />
         <Stats />
         <Testimonials />
         <SuccessCases />
