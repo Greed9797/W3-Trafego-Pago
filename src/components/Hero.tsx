@@ -39,7 +39,8 @@ export function Hero() {
       .from('.hero-sub', { y: 16, duration: 0.6, ease: 'power2.out' }, '-=0.2')
       .to('.hero-ctas', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
       .to('.hero-stats', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.2')
-      .to('.hero-shot', { opacity: 1, y: 0, rotateX: 0, duration: 0.9, ease: 'power3.out' }, '-=0.35')
+      // hero-shot NUNCA fica opacity-0: é o elemento LCP. Só desliza/endireita (paint conta no 1º frame).
+      .to('.hero-shot', { y: 0, rotateX: 0, duration: 0.9, ease: 'power3.out' }, '-=0.35')
 
     return () => {
       tl.kill()
@@ -91,7 +92,10 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="hero-shot relative z-10 w-full max-w-5xl mx-auto px-5 pb-12 md:pb-20 opacity-0">
+      <div
+        className="hero-shot relative z-10 w-full max-w-5xl mx-auto px-5 pb-12 md:pb-20"
+        style={{ transformOrigin: 'center top', transform: 'perspective(1400px) translateY(40px) rotateX(12deg)' }}
+      >
         <div className="relative liquid-glass rounded-xl md:rounded-2xl p-1.5 md:p-2 orange-glow">
           <div className="flex items-center gap-1.5 px-3 py-2">
             <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
@@ -102,8 +106,10 @@ export function Hero() {
             <img
               src={dashboardW3}
               alt="Painel de relatórios da W3 com faturamento, valor investido, custo de mídia e vendas por estado"
-              width={1600}
-              height={683}
+              width={1200}
+              height={512}
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-auto block"
             />
           </div>

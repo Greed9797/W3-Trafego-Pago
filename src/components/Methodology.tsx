@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { gsap } from '@/lib/gsap'
 import { SplitHeading } from './SplitHeading'
-import metodologia1 from '@/assets/metodologia-1.jpg'
-import metodologia2 from '@/assets/metodologia-2.jpg'
-import metodologia3 from '@/assets/metodologia-3.jpg'
-import metodologia4 from '@/assets/metodologia-4.jpg'
+import metodologia1 from '@/assets/metodologia-1.webp'
+import metodologia2 from '@/assets/metodologia-2.webp'
+import metodologia3 from '@/assets/metodologia-3.webp'
+import metodologia4 from '@/assets/metodologia-4.webp'
 
 const REASONS = [
   { image: metodologia1, title: "Planejamento", body: "Analisamos os números do seu negócio: tráfego, site, concorrentes, comportamento do cliente. E transformamos tudo em um plano de ação claro. Você entende onde está perdendo dinheiro e o que precisa ajustar para crescer de forma previsível." },
@@ -68,7 +68,7 @@ export function Methodology() {
           {REASONS.map((r, i) => (
             <div key={i} className="reason-card liquid-glass rounded-2xl overflow-hidden flex flex-col">
               <div className="relative aspect-[4/3] overflow-hidden">
-                <img src={r.image} alt={r.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                <img src={r.image} alt={r.title} width={700} height={525} className="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
               </div>
               <div className="p-5 md:p-6 flex flex-col gap-2.5 md:gap-3 -mt-8 relative">
