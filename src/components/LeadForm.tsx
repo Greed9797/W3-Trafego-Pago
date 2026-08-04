@@ -45,6 +45,21 @@ function normalizeSite(v: string) {
   return /^https?:\/\//i.test(t) ? t : `https://${t}`
 }
 
+// O CRM recebe leads do Meta Lead Ads (via Make) com as faixas em minúsculas e
+// underscore — "r$20_mil_a_r$50_mil_ao_mês". Enviamos no mesmo formato para que
+// lead de anúncio e lead da landing caiam no mesmo valor e possam ser filtrados juntos.
+function toCrmValue(label: string) {
+  return label.toLowerCase().replace(/ /g, '_')
+}
+
+// E.164, igual aos leads do Meta. Número nacional (10-11 dígitos) recebe o DDI;
+// acima disso o DDI já veio. Checar por comprimento, não por prefixo "55" — 55 também
+// é DDD (Santa Maria/RS) e um "(55) 99999-9999" seria confundido com DDI.
+function toE164(v: string) {
+  const d = digits(v)
+  return d.length >= 12 ? `+${d}` : `+55${d}`
+}
+
 const inputBase =
   'w-full rounded-xl bg-white/[0.04] border px-4 py-3 font-body text-sm text-foreground placeholder:text-foreground/35 outline-none transition-colors focus:border-primary/60 focus:bg-white/[0.06]'
 
@@ -165,10 +180,10 @@ export function LeadForm() {
         method: 'POST',
         body: new URLSearchParams({
           nome: nome.trim(),
-          telefone: numero.trim(),
+          telefone: toE164(numero),
           site: siteUrl,
-          faturamento,
-          investimento,
+          faturamento: toCrmValue(faturamento),
+          investimento: toCrmValue(investimento),
         }),
         keepalive: true,
       }).catch((err) => console.error('Falha ao enviar lead ao N8N:', err))
