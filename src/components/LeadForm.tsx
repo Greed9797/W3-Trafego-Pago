@@ -154,9 +154,10 @@ export function LeadForm() {
     setStatus('sending')
 
     // Envia lead ao N8N (Pipedrive) — fire-and-forget, não bloqueia o WhatsApp.
-    // Chaves batem com o code node "Qualificar + Roleta": nome, telefone, faturamento.
-    // site e investimento são novos; tipoNegocio foi removido do form — o node precisa
-    // tratar a ausência dessa chave sem desqualificar o lead.
+    // O workflow N8N "Landing page -> Tráfego Pago CRM" repassa uma allowlist explícita
+    // de chaves para leads-push (/api/ingest-lead), renomeando faturamento →
+    // faturamento_ecommerce e investimento → investimento_trafego. Chave nova aqui só
+    // chega ao CRM depois de ser adicionada lá.
     // urlencoded = "simple request": sem preflight CORS (webhook N8N não responde OPTIONS).
     const siteUrl = normalizeSite(site)
     if (N8N_WEBHOOK_URL) {
