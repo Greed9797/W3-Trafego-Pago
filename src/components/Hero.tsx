@@ -4,6 +4,7 @@ import SplitType from 'split-type'
 import { Button } from '@/components/ui/button'
 import dashboardW3 from '@/assets/dashboard-w3.webp'
 import { gsap } from '@/lib/gsap'
+import { prefersReducedMotion } from '@/lib/reduceMotion'
 import { CTA_HREF } from '@/lib/constants'
 
 const STATS = [
@@ -16,6 +17,11 @@ const PARTNERS = ["Meta Ads", "Google Ads"]
 
 export function Hero() {
   useEffect(() => {
+    if (prefersReducedMotion()) {
+      // Mobile: sem animação de entrada; garante os elementos opacity-0 visíveis.
+      gsap.set(['.hero-badge', '.hero-ctas', '.hero-stats'], { opacity: 1, y: 0 })
+      return
+    }
     const tl = gsap.timeline({ delay: 0.2 })
     let split: SplitType | null = null
 
@@ -72,7 +78,7 @@ export function Hero() {
 
         <div className="hero-ctas flex items-center gap-3 md:gap-4 flex-wrap justify-center opacity-0">
           <Button variant="hero" asChild>
-            <a href={CTA_HREF} target="_blank" rel="noopener noreferrer">
+            <a href={CTA_HREF}>
               Quero mais vendas <ArrowUpRight className="ml-1.5 size-4" />
             </a>
           </Button>

@@ -1,3 +1,9 @@
 export const BRAND_NAME = "W3 Tráfego Pago"
-export const CTA_HREF = "https://api.whatsapp.com/send/?phone=5568992523482&text=Olá!+Vim+pelo+site+da+W3+Tráfego+Pago+e+gostaria+de+falar+com+um+especialista&type=phone_number&app_absent=0"
+// CTAs da página abrem o formulário em modal (#diagnostico). O WhatsApp é acionado após o envio.
+export const CTA_HREF = "#diagnostico"
 export const CTA_LABEL = "Falar com Especialista"
+
+// Webhook N8N (Landing page → Pipedrive). Override opcional via VITE_N8N_WEBHOOK_URL.
+export const N8N_WEBHOOK_URL =
+  import.meta.env.VITE_N8N_WEBHOOK_URL ??
+  "https://ia-n8n.nwwqtc.easypanel.host/webhook/trafego-pago"

@@ -6,6 +6,8 @@ import { Stats } from '@/components/Stats'
 import { Testimonials } from '@/components/Testimonials'
 import { SuccessCases } from '@/components/SuccessCases'
 import { Faq } from '@/components/Faq'
+import { CtaBand } from '@/components/CtaBand'
+import { LeadForm } from '@/components/LeadForm'
 import { CtaFooter } from '@/components/CtaFooter'
 import { gsap, ScrollTrigger } from '@/lib/gsap'
 
@@ -31,10 +33,20 @@ export default function App() {
       <main>
         <Hero />
         <Methodology />
+        <CtaBand
+          eyebrow="Vamos conversar"
+          title="Pronto para transformar seu tráfego em vendas?"
+        />
         <Stats />
         <Testimonials />
         <SuccessCases />
+        <CtaBand
+          eyebrow="Sem enrolação"
+          title="Peça seu diagnóstico gratuito agora"
+          cta="Falar com especialista"
+        />
         <Faq />
+        <LeadForm />
         <CtaFooter />
       </main>
     </div>

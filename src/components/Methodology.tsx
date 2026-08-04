@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { gsap } from '@/lib/gsap'
+import { prefersReducedMotion } from '@/lib/reduceMotion'
 import { SplitHeading } from './SplitHeading'
 import metodologia1 from '@/assets/metodologia-1.webp'
 import metodologia2 from '@/assets/metodologia-2.webp'
@@ -21,6 +22,7 @@ const PROCESS_STEPS = [
 
 export function Methodology() {
   useEffect(() => {
+    if (prefersReducedMotion()) return
     const cards = gsap.utils.toArray('.reason-card')
     gsap.from(cards, {
       opacity: 0,

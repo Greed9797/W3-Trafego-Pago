@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import SplitType from 'split-type'
 import { gsap } from '@/lib/gsap'
+import { prefersReducedMotion } from '@/lib/reduceMotion'
 
 type Props = {
   text: string
@@ -21,6 +22,8 @@ export function SplitHeading({
 
   useEffect(() => {
     if (!ref.current) return
+    // Mobile/reduced-motion: renderiza texto estático (sem SplitType/GSAP) — corta TBT.
+    if (prefersReducedMotion()) return
     // 'chars' sozinho deixa palavras quebrarem no meio ao rebentar linha — 'words' junto preserva o wrap
     const split = new SplitType(ref.current, { types: animType === 'chars' ? 'chars,words' : animType })
     const targets = animType === 'chars' ? split.chars : animType === 'words' ? split.words : split.lines

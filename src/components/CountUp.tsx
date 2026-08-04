@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { gsap, ScrollTrigger } from '@/lib/gsap'
+import { prefersReducedMotion } from '@/lib/reduceMotion'
 
 type Props = {
   to: number
@@ -17,6 +18,11 @@ export function CountUp({ to, prefix = '', suffix = '', duration = 1.8, decimals
   useEffect(() => {
     if (!ref.current) return
     const el = ref.current
+
+    if (prefersReducedMotion()) {
+      el.textContent = `${prefix}${to.toFixed(decimals)}${suffix}`
+      return
+    }
 
     ScrollTrigger.create({
       trigger: el,

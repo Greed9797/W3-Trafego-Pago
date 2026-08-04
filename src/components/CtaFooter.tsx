@@ -22,7 +22,7 @@ export function CtaFooter() {
           </p>
           <div className="mt-8 md:mt-12 flex items-center justify-center gap-3 md:gap-4 flex-wrap">
             <Button variant="hero" asChild>
-              <a href={CTA_HREF} target="_blank" rel="noopener noreferrer">
+              <a href={CTA_HREF}>
                 <MessageCircle className="mr-2 size-4" /> Falar com Especialista
               </a>
             </Button>

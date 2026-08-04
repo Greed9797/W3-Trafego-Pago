@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { HelpCircle, MessageCircle } from 'lucide-react'
 import { gsap } from '@/lib/gsap'
+import { prefersReducedMotion } from '@/lib/reduceMotion'
 import { SplitHeading } from './SplitHeading'
 import { Button } from '@/components/ui/button'
 import { CTA_HREF } from '@/lib/constants'
@@ -14,6 +15,7 @@ const QUESTIONS = [
 
 export function Testimonials() {
   useEffect(() => {
+    if (prefersReducedMotion()) return
     gsap.from('.ask-card', {
       opacity: 0,
       y: 40,
@@ -66,7 +68,7 @@ export function Testimonials() {
             Uma falha invisível na sua operação que faz você perder vendas e dinheiro. A gente encontra — e corrige.
           </p>
           <Button variant="hero" asChild className="mt-7">
-            <a href={CTA_HREF} target="_blank" rel="noopener noreferrer">
+            <a href={CTA_HREF}>
               <MessageCircle className="mr-2 size-4" /> Quero meu diagnóstico
             </a>
           </Button>

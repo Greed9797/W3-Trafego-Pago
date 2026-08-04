@@ -64,7 +64,7 @@ export function Navbar() {
 
         <div className="flex items-center gap-2">
           <Button variant="hero" size="sm" asChild>
-            <a href={CTA_HREF} target="_blank" rel="noopener noreferrer" aria-label="Falar com a W3 no WhatsApp">
+            <a href={CTA_HREF} aria-label="Ir para o formulário de diagnóstico">
               <MessageCircle className="size-4" />
               <span className="hidden sm:inline">{BRAND_NAME.split(' ')[0]} Contato</span>
             </a>

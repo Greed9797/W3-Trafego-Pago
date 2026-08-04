@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { TrendingUp, ArrowRight } from 'lucide-react'
 import { gsap } from '@/lib/gsap'
+import { prefersReducedMotion } from '@/lib/reduceMotion'
 import { SplitHeading } from './SplitHeading'
 import rosaDoDeserto from '@/assets/clientes/rosa-do-deserto.png'
 import theGregs from '@/assets/clientes/the-gregs.png'
@@ -45,6 +46,7 @@ const CASES: SuccessCase[] = [
 
 export function SuccessCases() {
   useEffect(() => {
+    if (prefersReducedMotion()) return
     const cards = gsap.utils.toArray('.case-card')
     gsap.from(cards, {
       opacity: 0,

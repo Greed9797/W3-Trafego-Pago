@@ -24,6 +24,14 @@ dist-ssr
 *.sw?
 .vercel
 
+# Tooling local (índices/caches de agente)
+.fastcontext/
+.playwright-cli/
+.playwright-mcp/
+.code-review-graph/
+.serena/
+.qa/
+
 # Env / segredos
 .env
 .env.*

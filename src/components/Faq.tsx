@@ -25,7 +25,7 @@ export function Faq() {
               Encontre respostas para as perguntas mais comuns sobre nossos serviços e como podemos ajudar seu e-commerce a escalar.
             </p>
             <Button variant="hero" asChild className="mt-6 md:mt-8">
-              <a href={CTA_HREF} target="_blank" rel="noopener noreferrer">
+              <a href={CTA_HREF}>
                 <MessageCircle className="mr-2 size-4" />
                 Falar com Especialista
               </a>
