@@ -5,4 +5,39 @@
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://w3trafegopago.com.br/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://w3trafegopago.com.br/blog/meta-ads-ecommerce-o-que-medir-antes-de-escalar</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://w3trafegopago.com.br/blog/google-ads-ou-meta-ads-onde-investir-primeiro</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://w3trafegopago.com.br/blog/roas-nao-e-suficiente-metricas-trafego-saudavel</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://w3trafegopago.com.br/blog/criativos-de-performance-angulos-que-vendem</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://w3trafegopago.com.br/blog/estrutura-de-campanhas-para-decidir-com-dados</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://w3trafegopago.com.br/blog/checklist-trafego-pago-ecommerce-antes-de-investir</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

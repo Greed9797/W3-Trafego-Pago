@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { label: "Resultados", href: "#resultados" },
   { label: "Diagnóstico", href: "#depoimentos" },
   { label: "FAQ", href: "#faq" },
+  { label: "Blog", href: "/blog" },
 ]
 
 export function Navbar() {

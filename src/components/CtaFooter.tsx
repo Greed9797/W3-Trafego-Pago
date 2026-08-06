@@ -39,6 +39,7 @@ export function CtaFooter() {
           <span className="font-body text-[10px] md:text-xs text-foreground/60">© 2026 W3 Tráfego Pago. Todos os direitos reservados.</span>
           <nav className="flex gap-4 md:gap-6">
             {[
+              { label: "Blog", href: "/blog" },
               { label: "W3 Pagamentos", href: "#" },
               { label: "Quem Somos", href: "https://w3ecommerce.com.br/" },
             ].map(l => (

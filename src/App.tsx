@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Navbar } from '@/components/Navbar'
+import { BlogPage } from '@/components/BlogPage'
 import { Hero } from '@/components/Hero'
 import { Methodology } from '@/components/Methodology'
 import { Stats } from '@/components/Stats'
@@ -10,9 +11,22 @@ import { CtaBand } from '@/components/CtaBand'
 import { LeadForm } from '@/components/LeadForm'
 import { CtaFooter } from '@/components/CtaFooter'
 import { gsap, ScrollTrigger } from '@/lib/gsap'
+import { updateDocumentMetadata } from '@/lib/seo'
+
+function isBlogPath(pathname: string) {
+  return pathname === '/blog' || pathname.startsWith('/blog/')
+}
 
 export default function App() {
+  const [pathname] = useState(() => window.location.pathname)
+
   useEffect(() => {
+    updateDocumentMetadata(pathname)
+  }, [pathname])
+
+  useEffect(() => {
+    if (isBlogPath(pathname)) return
+
     gsap.config({ nullTargetWarn: false })
 
     // Recalcula posições dos triggers depois que fontes/imagens assentam o layout
@@ -25,7 +39,11 @@ export default function App() {
       window.removeEventListener('load', refresh)
       ScrollTrigger.getAll().forEach((t) => t.kill())
     }
-  }, [])
+  }, [pathname])
+
+  if (isBlogPath(pathname)) {
+    return <BlogPage pathname={pathname} />
+  }
 
   return (
     <div className="bg-background text-foreground min-h-screen overflow-x-hidden">
