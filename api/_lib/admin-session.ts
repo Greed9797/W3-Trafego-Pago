@@ -3,7 +3,7 @@ import {
   getAutoblogSettings,
   getBearerToken,
   type AutoblogEnvironment,
-} from './autoblog.ts'
+} from './autoblog.js'
 
 export const ADMIN_SESSION_COOKIE = 'w3_autoblog_admin'
 export const ADMIN_SESSION_MAX_AGE = 8 * 60 * 60

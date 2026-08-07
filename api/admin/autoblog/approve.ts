@@ -6,8 +6,8 @@ import {
   supabaseRequest,
   type AutoblogEnvironment,
   type DraftContent,
-} from '../../_lib/autoblog.ts'
-import { hasAdminAccess } from '../../_lib/admin-session.ts'
+} from '../../_lib/autoblog.js'
+import { hasAdminAccess } from '../../_lib/admin-session.js'
 
 type StoredDraft = {
   id: string

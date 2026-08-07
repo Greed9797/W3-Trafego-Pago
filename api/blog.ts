@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { getAutoblogSettings, getSupabaseConfig, supabaseRequest, type AutoblogEnvironment, type DraftContent } from './_lib/autoblog.ts'
+import { getAutoblogSettings, getSupabaseConfig, supabaseRequest, type AutoblogEnvironment, type DraftContent } from './_lib/autoblog.js'
 
 type StoredPublishedPost = {
   slug: string

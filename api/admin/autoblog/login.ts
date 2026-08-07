@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { getAutoblogSettings, type AutoblogEnvironment } from '../../_lib/autoblog.ts'
+import { getAutoblogSettings, type AutoblogEnvironment } from '../../_lib/autoblog.js'
 import {
   createAdminSession,
   getAdminSessionCookie,
   isAdminTokenValid,
-} from '../../_lib/admin-session.ts'
+} from '../../_lib/admin-session.js'
 
 function sendJson(res: VercelResponse, status: number, body: unknown) {
   res.setHeader('Cache-Control', 'no-store')

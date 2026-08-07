@@ -13,7 +13,7 @@ import {
   type DraftContent,
   type FeedItem,
   type SupabaseConfig,
-} from '../_lib/autoblog.ts'
+} from '../_lib/autoblog.js'
 
 type FeedDefinition = {
   name: string

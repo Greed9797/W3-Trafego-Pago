@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { getExpiredAdminSessionCookie } from '../../_lib/admin-session.ts'
+import { getExpiredAdminSessionCookie } from '../../_lib/admin-session.js'
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' })
