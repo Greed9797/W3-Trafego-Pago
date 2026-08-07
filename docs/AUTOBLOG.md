@@ -5,6 +5,7 @@
 - `src/lib/editorial-calendar.ts`: roteiro determinístico de setembro de 2026 com 90 slots.
 - `supabase/migrations/001_autoblog.sql`: posts, sinais, runs, keywords, índices e RLS.
 - `GET /api/cron/autoblog`: coleta diária protegida e idempotente.
+- Apify opcional: pesquisa tendências e palavras-chave no Brasil, com rotação de tokens e fallback sem interromper os feeds oficiais.
 - `POST /api/admin/autoblog/approve`: aprovação humana protegida de drafts.
 - `/admin`: central administrativa protegida com resumo e navegação por módulos.
 - `/admin/content`: gestão editorial geral do conteúdo do blog.
@@ -21,6 +22,10 @@
    - `SUPABASE_PUBLIC_KEY`
    - `CRON_SECRET`
    - `AUTOBLOG_ADMIN_TOKEN`
+   - `APIFY_API_TOKENS` (opcional; tokens separados por vírgula, somente server-side)
+   - `APIFY_ACTOR_ID` (opcional; padrão `apify/google-trends-scraper`)
+   - `APIFY_KEYWORDS` (opcional; termos separados por vírgula)
+   - `APIFY_RUN_TIMEOUT_SECONDS` (opcional; entre 10 e 50, padrão 40)
 3. Faça um deploy de produção. Cron Jobs da Vercel só executam no deployment de produção.
 4. Para enriquecer drafts com IA, defina `AUTOBLOG_LLM_ENABLED=true`, endpoint, modelo e chave. Com a opção desligada, o sistema cria um draft determinístico com fonte e checklist de revisão.
 
@@ -34,7 +39,9 @@ O painel usa uma sessão HttpOnly, com expiração de oito horas. O token admini
 Vercel Cron
   → autoriza CRON_SECRET
   → verifica run_date único em São Paulo
-  → lê Google Trends + feeds oficiais
+  → consulta Apify Google Trends quando configurado
+  → lê feeds oficiais como fonte de confirmação
+  → grava keywords em `autoblog_keywords`
   → filtra URL HTTPS/allowlist
   → grava sinal
   → cria 1 platform-update em draft
@@ -42,6 +49,8 @@ Vercel Cron
 ```
 
 Uma execução repetida no mesmo dia retorna `already_processed`. Falhas de feed são registradas por fonte; sem sinal de plataforma verificável, nenhum draft é criado.
+
+O Apify é uma camada de descoberta, não uma fonte de verdade. O Actor `apify/google-trends-scraper` retorna termos e sinais de tendência; somente URLs HTTPS de domínios oficiais permitidos podem gerar um draft de atualização. Se a API estiver indisponível, o cron continua com RSS. Tokens em `APIFY_API_TOKENS` são tentados em rotação apenas para respostas 401, 403 ou 429; os valores nunca aparecem em logs, respostas ou no bundle do navegador.
 
 ## Fontes padrão
 

@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { collectApifyTrends, type ApifyKeyword, type ApifySourceCandidate } from '../_lib/apify.js'
 import {
   buildSlug,
   getSaoPauloDate,
@@ -159,6 +160,18 @@ function isPlatformSignal(signal: CollectedSignal) {
   return signal.feedKind === 'platform' && isAllowedSourceUrl(signal.link)
 }
 
+function sourceCandidateToSignal(candidate: ApifySourceCandidate): CollectedSignal {
+  return {
+    title: candidate.title,
+    link: candidate.link,
+    excerpt: candidate.excerpt,
+    publishedAt: candidate.publishedAt,
+    sourceUrl: candidate.link,
+    feedName: 'Apify · Google Trends',
+    feedKind: 'platform',
+  }
+}
+
 async function getExistingRun(config: SupabaseConfig, runDate: string) {
   return supabaseRequest<RunRecord[]>(config, `autoblog_runs?run_date=eq.${runDate}&select=id,run_date,status&limit=1`)
 }
@@ -218,6 +231,24 @@ async function persistDraft(config: SupabaseConfig, draft: ReturnType<typeof cre
       source_url: draft.sourceUrl,
       source_collected_at: draft.sourceCollectedAt,
     }),
+  })
+}
+
+async function persistKeywords(config: SupabaseConfig, keywords: ApifyKeyword[], observedOn: string) {
+  if (keywords.length === 0) return
+
+  await supabaseRequest(config, 'autoblog_keywords?on_conflict=keyword%2Csource%2Cobserved_on', {
+    method: 'POST',
+    headers: {
+      Prefer: 'resolution=merge-duplicates,return=minimal',
+    },
+    body: JSON.stringify(keywords.map((item) => ({
+      keyword: item.keyword,
+      source: 'apify-google-trends',
+      score: item.score,
+      observed_on: observedOn,
+      metadata: item.metadata,
+    }))),
   })
 }
 
@@ -327,7 +358,22 @@ export async function runDailyAutoblog(
   }
 
   const collectedAt = new Date().toISOString()
-  const collected = await collectSignals(getFeeds(settings))
+  const rssCollected = await collectSignals(getFeeds(settings))
+  const apifyCollected = await collectApifyTrends(settings)
+  const collected = {
+    signals: [
+      ...rssCollected.signals,
+      ...apifyCollected.sources.map(sourceCandidateToSignal),
+    ],
+    errors: [...rssCollected.errors, ...apifyCollected.errors],
+  }
+  if (apifyCollected.keywords.length > 0) {
+    try {
+      await persistKeywords(config, apifyCollected.keywords, runDate)
+    } catch (error) {
+      collected.errors.push(`Apify keywords: ${error instanceof Error ? error.message : 'persist failed'}`)
+    }
+  }
   const validSignals = collected.signals.filter(isPlatformSignal)
   const topSignal = validSignals[0]
   let draftCount = 0

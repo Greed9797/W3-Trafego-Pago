@@ -20,6 +20,11 @@
       "schedule": "0 12 * * *"
     }
   ],
+  "functions": {
+    "api/cron/autoblog.ts": {
+      "maxDuration": 60
+    }
+  },
   "headers": [
     {
       "source": "/admin/:path*",

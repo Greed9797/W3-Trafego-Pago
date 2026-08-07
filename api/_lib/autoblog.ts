@@ -34,6 +34,11 @@ export type AutoblogEnvironment = {
   llmApiKey?: string
   llmModel?: string
   feeds?: string
+  apifyApiToken?: string
+  apifyApiTokens?: string
+  apifyActorId?: string
+  apifyKeywords?: string
+  apifyRunTimeoutSeconds?: string
   CRON_SECRET?: string
   AUTOBLOG_ADMIN_TOKEN?: string
   SUPABASE_URL?: string
@@ -46,6 +51,11 @@ export type AutoblogEnvironment = {
   AUTOBLOG_LLM_API_KEY?: string
   AUTOBLOG_LLM_MODEL?: string
   AUTOBLOG_FEEDS?: string
+  APIFY_API_TOKEN?: string
+  APIFY_API_TOKENS?: string
+  APIFY_ACTOR_ID?: string
+  APIFY_KEYWORDS?: string
+  APIFY_RUN_TIMEOUT_SECONDS?: string
   [key: string]: string | undefined
 }
 
@@ -87,6 +97,11 @@ export function getAutoblogSettings(env: AutoblogEnvironment): AutoblogEnvironme
     llmApiKey: firstEnvValue(env, 'llmApiKey', 'AUTOBLOG_LLM_API_KEY'),
     llmModel: firstEnvValue(env, 'llmModel', 'AUTOBLOG_LLM_MODEL'),
     feeds: firstEnvValue(env, 'feeds', 'AUTOBLOG_FEEDS'),
+    apifyApiToken: firstEnvValue(env, 'apifyApiToken', 'APIFY_API_TOKEN'),
+    apifyApiTokens: firstEnvValue(env, 'apifyApiTokens', 'APIFY_API_TOKENS'),
+    apifyActorId: firstEnvValue(env, 'apifyActorId', 'APIFY_ACTOR_ID'),
+    apifyKeywords: firstEnvValue(env, 'apifyKeywords', 'APIFY_KEYWORDS'),
+    apifyRunTimeoutSeconds: firstEnvValue(env, 'apifyRunTimeoutSeconds', 'APIFY_RUN_TIMEOUT_SECONDS'),
   }
 }
 

@@ -114,6 +114,72 @@ test('cron persiste um draft de update e a segunda execução é idempotente', a
   }
 })
 
+test('cron usa Apify como descoberta e mantém a fonte oficial como draft', async () => {
+  const originalFetch = globalThis.fetch
+  const calls: Array<{ url: string; init?: RequestInit }> = []
+  globalThis.fetch = async (input, init) => {
+    const url = String(input)
+    calls.push({ url, init })
+
+    if (url.includes('autoblog_runs?')) {
+      return new Response('[]', { status: 200 })
+    }
+    if (url.endsWith('/autoblog_runs')) {
+      return new Response(JSON.stringify([{ id: 'run-apify', run_date: '2026-09-02', status: 'running' }]), { status: 201 })
+    }
+    if (url.includes('autoblog_keywords?on_conflict=')) {
+      return new Response('', { status: 201 })
+    }
+    if (url.includes('autoblog_signals?')) {
+      return new Response('[]', { status: 200 })
+    }
+    if (url.endsWith('/autoblog_signals') || url.endsWith('/blog_posts')) {
+      return new Response('', { status: 201 })
+    }
+    if (url.includes('autoblog_runs?id=')) {
+      return new Response('', { status: 204 })
+    }
+    if (url.includes('api.apify.com')) {
+      return new Response(JSON.stringify([{
+        searchTerm: 'google ads',
+        relatedQueries: [{ query: 'como anunciar no google', value: 74 }],
+        newsArticles: [{
+          title: 'Atualização oficial do Google Ads',
+          url: 'https://blog.google/products/ads-commerce/update/',
+          description: 'Fonte oficial',
+        }],
+      }]), { status: 200 })
+    }
+    if (url.includes('blog.google')) {
+      return new Response('<rss><channel></channel></rss>', { status: 200 })
+    }
+    throw new Error(`unexpected URL ${url}`)
+  }
+
+  try {
+    const res = responseStub()
+    await handleAutoblog({ method: 'GET', headers: { authorization: 'Bearer cron-secret' } }, res as never, {
+      cronSecret: 'cron-secret',
+      supabaseUrl: 'https://project.supabase.co',
+      supabaseServiceRoleKey: 'service-role',
+      feeds: JSON.stringify([{ name: 'Google Ads', url: 'https://blog.google/products/ads-commerce/rss/', kind: 'platform' }]),
+      apifyApiToken: 'test-apify-token',
+    }, new Date('2026-09-02T12:00:00.000Z'))
+
+    assert.equal(res.statusCode, 200)
+    assert.deepEqual(res.body, { status: 'completed', runDate: '2026-09-02', sourceCount: 1, draftCount: 1, errors: [] })
+
+    const keywordCall = calls.find((call) => call.url.includes('autoblog_keywords?on_conflict='))
+    const keywordPayload = JSON.parse(String(keywordCall?.init?.body)) as Array<Record<string, unknown>>
+    assert.ok(keywordPayload.some((item) => item.keyword === 'como anunciar no google' && item.source === 'apify-google-trends'))
+
+    const apifyCall = calls.find((call) => call.url.includes('api.apify.com'))
+    assert.equal(new Headers(apifyCall?.init?.headers).get('authorization'), 'Bearer test-apify-token')
+  } finally {
+    globalThis.fetch = originalFetch
+  }
+})
+
 test('draft preserva fonte e permanece em status draft', () => {
   const draft = createDraftFromSignal({
     title: 'Mudança de medição',
