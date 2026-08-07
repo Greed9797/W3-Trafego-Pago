@@ -94,7 +94,7 @@ Implementar estas tarefas com `tlc-spec-driven`: ciclo por tarefa (implementar â
 **Requirement**: AUTO-05
 **Tests**: unit + handler contract
 **Gate**: full
-**Status**: pending
+**Status**: done
 
 ### T6: Expose published content with fallback
 
