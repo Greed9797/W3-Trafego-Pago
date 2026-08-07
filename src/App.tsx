@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Navbar } from '@/components/Navbar'
 import { BlogPage } from '@/components/BlogPage'
 import { AdminAutoblogPage } from '@/components/AdminAutoblogPage'
+import { AdminPage } from '@/components/AdminPage'
 import { Hero } from '@/components/Hero'
 import { Methodology } from '@/components/Methodology'
 import { Stats } from '@/components/Stats'
@@ -19,7 +20,7 @@ function isBlogPath(pathname: string) {
 }
 
 function isAdminPath(pathname: string) {
-  return pathname === '/admin/autoblog' || pathname.startsWith('/admin/autoblog/')
+  return pathname === '/admin' || pathname.startsWith('/admin/')
 }
 
 export default function App() {
@@ -52,7 +53,9 @@ export default function App() {
   }
 
   if (isAdminPath(pathname)) {
-    return <AdminAutoblogPage />
+    if (pathname === '/admin' || pathname === '/admin/') return <AdminPage />
+    if (pathname === '/admin/content' || pathname.startsWith('/admin/content/')) return <AdminAutoblogPage section="content" />
+    return <AdminAutoblogPage section="autoblog" />
   }
 
   return (

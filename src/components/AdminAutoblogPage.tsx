@@ -19,6 +19,7 @@ type AdminPost = {
 }
 
 type ViewFilter = 'all' | AdminPost['status']
+type AdminSection = 'content' | 'autoblog'
 
 function formatDate(value: string | null) {
   if (!value) return 'Sem data'
@@ -43,7 +44,8 @@ function statusLabel(status: AdminPost['status']) {
   return 'Draft'
 }
 
-export function AdminAutoblogPage() {
+export function AdminAutoblogPage({ section = 'autoblog' }: { section?: AdminSection }) {
+  const isContentSection = section === 'content'
   const [token, setToken] = useState('')
   const [authenticated, setAuthenticated] = useState(false)
   const [posts, setPosts] = useState<AdminPost[]>([])
@@ -53,7 +55,7 @@ export function AdminAutoblogPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    document.title = 'Admin editorial | W3 Tráfego Pago'
+    document.title = isContentSection ? 'Conteúdo do blog | W3 Tráfego Pago' : 'AutoBlog | W3 Tráfego Pago'
     let robots = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]')
     if (!robots) {
       robots = document.createElement('meta')
@@ -61,7 +63,7 @@ export function AdminAutoblogPage() {
       document.head.appendChild(robots)
     }
     robots.content = 'noindex, nofollow'
-  }, [])
+  }, [isContentSection])
 
   async function loadPosts(showError = true) {
     setBusy(true)
@@ -149,14 +151,27 @@ export function AdminAutoblogPage() {
     published: posts.filter((post) => post.status === 'published').length,
   }), [posts])
 
+  const sectionLabel = isContentSection ? 'Conteúdo do blog' : 'AutoBlog W3'
+  const sectionTitle = isContentSection ? 'Biblioteca editorial.' : 'Conteúdo em operação.'
+  const sectionDescription = isContentSection
+    ? 'Gerencie os conteúdos do blog, datas de publicação e fontes editoriais em um só lugar.'
+    : 'Os posts programados aguardam suas datas. Drafts externos só podem ser publicados após revisão.'
+
   return (
     <main className="min-h-screen bg-[#f2f1ee] text-[#0d0d0d]">
       <header className="border-b border-black/10 bg-[#0d0d0d] text-white">
-        <div className="mx-auto flex w-[min(1200px,calc(100vw-32px))] items-center justify-between gap-5 py-5">
-          <a href="/" aria-label="W3 Tráfego Pago — início">
-            <img src={logoW3} alt="W3 Tráfego Pago" width={195} height={26} className="h-5 w-auto" />
-          </a>
-          <span className="font-body text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">Admin editorial</span>
+        <div className="mx-auto flex w-[min(1200px,calc(100vw-32px))] flex-wrap items-center justify-between gap-5 py-5">
+          <div className="flex items-center gap-7">
+            <a href="/" aria-label="W3 Tráfego Pago — início">
+              <img src={logoW3} alt="W3 Tráfego Pago" width={195} height={26} className="h-5 w-auto" />
+            </a>
+            <nav aria-label="Administração" className="hidden items-center gap-4 font-body text-[10px] font-bold uppercase tracking-[0.12em] text-white/50 sm:flex">
+              <a href="/admin" className="transition hover:text-white">Central</a>
+              <a href="/admin/content" className={`transition hover:text-white ${isContentSection ? 'text-white' : ''}`}>Conteúdo</a>
+              <a href="/admin/autoblog" className={`transition hover:text-white ${!isContentSection ? 'text-white' : ''}`}>AutoBlog</a>
+            </nav>
+          </div>
+          <span className="font-body text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">{sectionLabel}</span>
         </div>
       </header>
 
@@ -164,9 +179,9 @@ export function AdminAutoblogPage() {
         {!authenticated ? (
           <section className="mx-auto max-w-xl rounded-3xl border border-black/10 bg-white p-7 shadow-[0_18px_60px_rgba(13,13,13,0.08)] md:p-10">
             <div className="flex size-12 items-center justify-center rounded-2xl bg-[#0d0d0d] text-[#f55900]"><LockKeyhole className="size-5" /></div>
-            <p className="mt-8 font-body text-[10px] font-bold uppercase tracking-[0.2em] text-[#c2440a]">Área protegida</p>
-            <h1 className="mt-3 font-display text-4xl font-bold leading-none tracking-[-0.06em] md:text-6xl">Central editorial.</h1>
-            <p className="mt-5 font-body text-base leading-7 text-[#575757]">Consulte a fila do autoblog e aprove somente conteúdos com fonte e conteúdo válidos.</p>
+            <p className="mt-8 font-body text-[10px] font-bold uppercase tracking-[0.2em] text-[#c2440a]">{sectionLabel}</p>
+            <h1 className="mt-3 font-display text-4xl font-bold leading-none tracking-[-0.06em] md:text-6xl">Área protegida.</h1>
+            <p className="mt-5 font-body text-base leading-7 text-[#575757]">Entre para acessar a central administrativa e revisar conteúdos com fonte e conteúdo válidos.</p>
             <form className="mt-8" onSubmit={login} autoComplete="off">
               <label htmlFor="admin-token" className="font-body text-xs font-bold uppercase tracking-[0.12em] text-[#3f3f3f]">Token administrativo</label>
               <input
@@ -190,9 +205,9 @@ export function AdminAutoblogPage() {
           <>
             <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
               <div>
-                <p className="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-[#c2440a]">Autoblog W3</p>
-                <h1 className="mt-3 font-display text-5xl font-bold leading-none tracking-[-0.07em] md:text-7xl">Conteúdo em operação.</h1>
-                <p className="mt-5 max-w-xl font-body text-base leading-7 text-[#575757]">Os posts programados aguardam suas datas. Drafts externos só podem ser publicados após revisão.</p>
+                <p className="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-[#c2440a]">{sectionLabel}</p>
+                <h1 className="mt-3 font-display text-5xl font-bold leading-none tracking-[-0.07em] md:text-7xl">{sectionTitle}</h1>
+                <p className="mt-5 max-w-xl font-body text-base leading-7 text-[#575757]">{sectionDescription}</p>
               </div>
               <div className="flex gap-2">
                 <button type="button" onClick={() => loadPosts()} disabled={busy} className="inline-flex items-center gap-2 rounded-full border border-black/15 px-4 py-3 font-body text-[11px] font-bold uppercase tracking-[0.1em] text-[#3f3f3f] transition hover:border-[#c2440a] hover:text-[#c2440a] disabled:opacity-50"><RefreshCw className={`size-4 ${busy ? 'animate-spin' : ''}`} /> Atualizar</button>
@@ -215,7 +230,7 @@ export function AdminAutoblogPage() {
             <section className="mt-10 overflow-hidden rounded-3xl border border-black/10 bg-white">
               <div className="flex items-center justify-between gap-4 border-b border-black/10 px-5 py-5 md:px-7">
                 <div>
-                  <p className="font-body text-[10px] font-bold uppercase tracking-[0.18em] text-[#c2440a]">Fila editorial</p>
+                  <p className="font-body text-[10px] font-bold uppercase tracking-[0.18em] text-[#c2440a]">{isContentSection ? 'Biblioteca editorial' : 'Fila editorial'}</p>
                   <h2 className="mt-2 font-display text-2xl font-bold tracking-[-0.04em]">{visiblePosts.length} registros</h2>
                 </div>
                 <CalendarClock className="size-5 text-[#c2440a]" />

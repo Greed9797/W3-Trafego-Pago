@@ -6,7 +6,11 @@
       "destination": "/index.html"
     },
     {
-      "source": "/admin/autoblog/:path*",
+      "source": "/admin",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/admin/:path*",
       "destination": "/index.html"
     }
   ],
@@ -18,7 +22,7 @@
   ],
   "headers": [
     {
-      "source": "/admin/autoblog/:path*",
+      "source": "/admin/:path*",
       "headers": [
         {
           "key": "X-Robots-Tag",

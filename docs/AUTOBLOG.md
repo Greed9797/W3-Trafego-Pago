@@ -6,7 +6,9 @@
 - `supabase/migrations/001_autoblog.sql`: posts, sinais, runs, keywords, índices e RLS.
 - `GET /api/cron/autoblog`: coleta diária protegida e idempotente.
 - `POST /api/admin/autoblog/approve`: aprovação humana protegida de drafts.
-- `/admin/autoblog`: painel protegido para acompanhar programados, drafts e publicados.
+- `/admin`: central administrativa protegida com resumo e navegação por módulos.
+- `/admin/content`: gestão editorial geral do conteúdo do blog.
+- `/admin/autoblog`: módulo AutoBlog para acompanhar programados, drafts e publicados.
 - `GET /api/blog`: posts publicados para hidratação do blog, com fallback estático.
 - `vercel.json`: cron de produção às 12:00 UTC, equivalente a 09:00 no horário de São Paulo.
 
