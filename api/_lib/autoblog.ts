@@ -30,6 +30,7 @@ export type AutoblogEnvironment = {
   supabaseServiceRoleKey?: string
   supabasePublicKey?: string
   llmEnabled?: string
+  llmEndpoint?: string
   llmApiKey?: string
   llmModel?: string
   feeds?: string

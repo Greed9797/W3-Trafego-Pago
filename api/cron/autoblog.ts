@@ -5,6 +5,7 @@ import {
   getSupabaseConfig,
   hasBearerToken,
   isAllowedSourceUrl,
+  isDraftPublishable,
   parseFeedItems,
   supabaseRequest,
   type AutoblogEnvironment,
@@ -219,6 +220,83 @@ async function persistDraft(config: SupabaseConfig, draft: ReturnType<typeof cre
   })
 }
 
+function parseModelJson(value: string) {
+  const normalized = value.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+  try {
+    return JSON.parse(normalized) as Record<string, unknown>
+  } catch {
+    return null
+  }
+}
+
+export async function enrichDraftWithLlm(
+  baseDraft: ReturnType<typeof createDraftFromSignal>,
+  signal: CollectedSignal,
+  env: AutoblogEnvironment,
+) {
+  if (env.llmEnabled !== 'true' || !env.llmEndpoint || !env.llmApiKey) return baseDraft
+
+  try {
+    const endpoint = new URL(env.llmEndpoint)
+    if (endpoint.protocol !== 'https:') return baseDraft
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.llmApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      signal: AbortSignal.timeout(12000),
+      body: JSON.stringify({
+        model: env.llmModel || 'gpt-4o-mini',
+        temperature: 0.2,
+        response_format: { type: 'json_object' },
+        messages: [
+          {
+            role: 'system',
+            content: 'Você é editor de um blog brasileiro de tráfego pago. Escreva em pt-BR. Não invente fatos, números ou impactos. Use apenas o sinal e o resumo fornecidos. Retorne JSON com title, excerpt e sections; sections é uma lista de objetos com heading, paragraphs e opcionalmente bullets.',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify({
+              sourceTitle: signal.title,
+              sourceExcerpt: signal.excerpt,
+              sourceUrl: signal.link,
+              baseTitle: baseDraft.title,
+            }),
+          },
+        ],
+      }),
+    })
+    if (!response.ok) return baseDraft
+
+    const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> }
+    const rawContent = payload.choices?.[0]?.message?.content
+    if (typeof rawContent !== 'string') return baseDraft
+    const generated = parseModelJson(rawContent)
+    if (!generated || typeof generated.title !== 'string' || typeof generated.excerpt !== 'string' || !Array.isArray(generated.sections)) return baseDraft
+
+    const candidate = {
+      ...baseDraft,
+      title: generated.title.trim().slice(0, 180),
+      slug: `${buildSlug(generated.title)}-${getSaoPauloDate(new Date(baseDraft.sourceCollectedAt))}`,
+      excerpt: generated.excerpt.trim().slice(0, 600),
+      content: { sections: generated.sections },
+    }
+    return isDraftPublishable({
+      title: candidate.title,
+      slug: candidate.slug,
+      excerpt: candidate.excerpt,
+      category: candidate.category,
+      content: candidate.content,
+      sourceUrl: candidate.sourceUrl,
+      sourceCollectedAt: candidate.sourceCollectedAt,
+    }) ? candidate : baseDraft
+  } catch {
+    return baseDraft
+  }
+}
+
 export async function runDailyAutoblog(
   env: AutoblogEnvironment,
   now = new Date(),
@@ -253,7 +331,9 @@ export async function runDailyAutoblog(
 
   try {
     if (topSignal && await persistSignal(config, topSignal, collectedAt)) {
-      await persistDraft(config, createDraftFromSignal(topSignal, collectedAt))
+      const baseDraft = createDraftFromSignal(topSignal, collectedAt)
+      const draft = await enrichDraftWithLlm(baseDraft, topSignal, env)
+      await persistDraft(config, draft)
       draftCount = 1
     }
 

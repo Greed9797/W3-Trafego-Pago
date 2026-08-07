@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { createDraftFromSignal, handleAutoblog } from '../api/cron/autoblog.ts'
+import { createDraftFromSignal, enrichDraftWithLlm, handleAutoblog } from '../api/cron/autoblog.ts'
 
 type ResponseStub = {
   statusCode: number
@@ -129,4 +129,45 @@ test('draft preserva fonte e permanece em status draft', () => {
   assert.equal(draft.status, 'draft')
   assert.equal(draft.sourceUrl, 'https://support.google.com/google-ads/announcements/9048695')
   assert.equal(draft.content.sections.length, 3)
+})
+
+test('IA opcional enriquece o draft sem remover fonte ou status', async () => {
+  const originalFetch = globalThis.fetch
+  let endpoint = ''
+  globalThis.fetch = async (input) => {
+    endpoint = String(input)
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: JSON.stringify({
+        title: 'O que a nova medição muda no Google Ads',
+        excerpt: 'Um resumo editorial da mudança para anunciantes.',
+        sections: [{ heading: 'O que observar', paragraphs: ['Revise o diagnóstico antes de editar campanhas.'] }],
+      }) } }],
+    }), { status: 200 })
+  }
+
+  try {
+    const signal = {
+      title: 'Mudança de medição',
+      link: 'https://support.google.com/google-ads/announcements/9048695',
+      excerpt: 'Texto original',
+      publishedAt: null,
+      sourceUrl: 'https://blog.google/products/ads-commerce/rss/',
+      feedName: 'Google Ads Help',
+      feedKind: 'platform' as const,
+    }
+    const baseDraft = createDraftFromSignal(signal, '2026-08-07T12:00:00.000Z')
+    const draft = await enrichDraftWithLlm(baseDraft, signal, {
+      llmEnabled: 'true',
+      llmEndpoint: 'https://llm.example.com/v1/chat/completions',
+      llmApiKey: 'test-key',
+    })
+
+    assert.equal(endpoint, 'https://llm.example.com/v1/chat/completions')
+    assert.equal(draft.title, 'O que a nova medição muda no Google Ads')
+    assert.equal(draft.status, 'draft')
+    assert.equal(draft.sourceUrl, signal.link)
+    assert.equal(draft.content.sections[0].heading, 'O que observar')
+  } finally {
+    globalThis.fetch = originalFetch
+  }
 })

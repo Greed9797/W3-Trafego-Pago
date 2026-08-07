@@ -124,7 +124,7 @@ Implementar estas tarefas com `tlc-spec-driven`: ciclo por tarefa (implementar â
 **Requirement**: AUTO-01, DATA-02, SEO-01
 **Tests**: none
 **Gate**: build
-**Status**: pending
+**Status**: done
 
 ## Cross-checks
 
