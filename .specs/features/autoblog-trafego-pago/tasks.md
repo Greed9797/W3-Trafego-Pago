@@ -74,7 +74,7 @@ Implementar estas tarefas com `tlc-spec-driven`: ciclo por tarefa (implementar â
 **Requirement**: DATA-01, DATA-02
 **Tests**: unit
 **Gate**: full
-**Status**: pending
+**Status**: done
 
 ### T4: Implement protected daily research cron
 
