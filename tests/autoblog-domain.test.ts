@@ -49,6 +49,10 @@ test('produz slug estável, data local e configuração segura', () => {
     url: 'https://project.supabase.co',
     serviceRoleKey: 'secret',
   })
+  assert.deepEqual(getSupabaseConfig({ SUPABASE_URL: 'https://project.supabase.co/', SUPABASE_SECRET_KEY: 'secret' }), {
+    url: 'https://project.supabase.co',
+    serviceRoleKey: 'secret',
+  })
 })
 
 test('valida draft somente com fonte, conteúdo e timestamp válidos', () => {

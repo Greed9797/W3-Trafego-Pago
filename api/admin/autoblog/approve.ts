@@ -1,12 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import {
   getSupabaseConfig,
-  hasBearerToken,
+  getAutoblogSettings,
   isDraftPublishable,
   supabaseRequest,
   type AutoblogEnvironment,
   type DraftContent,
 } from '../../_lib/autoblog.ts'
+import { hasAdminAccess } from '../../_lib/admin-session.ts'
 
 type StoredDraft = {
   id: string
@@ -41,9 +42,10 @@ export async function handleApproval(
   now = new Date(),
 ) {
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'method_not_allowed' })
-  if (!hasBearerToken(req.headers, env.adminToken)) return sendJson(res, 401, { error: 'unauthorized' })
+  const settings = getAutoblogSettings(env)
+  if (!hasAdminAccess(req.headers, settings, now)) return sendJson(res, 401, { error: 'unauthorized' })
 
-  const config = getSupabaseConfig(env)
+  const config = getSupabaseConfig(settings)
   if (!config) return sendJson(res, 503, { error: 'autoblog_not_configured' })
 
   const id = getDraftId(req.body)

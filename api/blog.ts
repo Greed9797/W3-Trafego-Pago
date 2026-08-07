@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { getSupabaseConfig, supabaseRequest, type AutoblogEnvironment, type DraftContent } from './_lib/autoblog.ts'
+import { getAutoblogSettings, getSupabaseConfig, supabaseRequest, type AutoblogEnvironment, type DraftContent } from './_lib/autoblog.ts'
 
 type StoredPublishedPost = {
   slug: string
@@ -92,9 +92,10 @@ export async function handleBlog(
 ) {
   if (req.method !== 'GET') return sendJson(res, 405, { error: 'method_not_allowed' })
 
+  const settings = getAutoblogSettings(env)
   const config = getSupabaseConfig({
-    supabaseUrl: env.supabaseUrl,
-    supabaseServiceRoleKey: env.supabasePublicKey,
+    supabaseUrl: settings.supabaseUrl,
+    supabaseServiceRoleKey: settings.supabasePublicKey,
   })
   if (!config) return sendJson(res, 200, { articles: [] })
 

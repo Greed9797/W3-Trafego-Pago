@@ -3,6 +3,7 @@ import {
   buildSlug,
   getSaoPauloDate,
   getSupabaseConfig,
+  getAutoblogSettings,
   hasBearerToken,
   isAllowedSourceUrl,
   isDraftPublishable,
@@ -234,21 +235,22 @@ export async function enrichDraftWithLlm(
   signal: CollectedSignal,
   env: AutoblogEnvironment,
 ) {
-  if (env.llmEnabled !== 'true' || !env.llmEndpoint || !env.llmApiKey) return baseDraft
+  const settings = getAutoblogSettings(env)
+  if (settings.llmEnabled !== 'true' || !settings.llmEndpoint || !settings.llmApiKey) return baseDraft
 
   try {
-    const endpoint = new URL(env.llmEndpoint)
+    const endpoint = new URL(settings.llmEndpoint)
     if (endpoint.protocol !== 'https:') return baseDraft
 
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${env.llmApiKey}`,
+        Authorization: `Bearer ${settings.llmApiKey}`,
         'Content-Type': 'application/json',
       },
       signal: AbortSignal.timeout(12000),
       body: JSON.stringify({
-        model: env.llmModel || 'gpt-4o-mini',
+        model: settings.llmModel || 'gpt-4o-mini',
         temperature: 0.2,
         response_format: { type: 'json_object' },
         messages: [
@@ -301,7 +303,8 @@ export async function runDailyAutoblog(
   env: AutoblogEnvironment,
   now = new Date(),
 ): Promise<CronResult> {
-  const config = getSupabaseConfig(env)
+  const settings = getAutoblogSettings(env)
+  const config = getSupabaseConfig(settings)
   if (!config) throw new Error('autoblog_not_configured')
 
   const runDate = getSaoPauloDate(now)
@@ -324,7 +327,7 @@ export async function runDailyAutoblog(
   }
 
   const collectedAt = new Date().toISOString()
-  const collected = await collectSignals(getFeeds(env))
+  const collected = await collectSignals(getFeeds(settings))
   const validSignals = collected.signals.filter(isPlatformSignal)
   const topSignal = validSignals[0]
   let draftCount = 0
@@ -332,7 +335,7 @@ export async function runDailyAutoblog(
   try {
     if (topSignal && await persistSignal(config, topSignal, collectedAt)) {
       const baseDraft = createDraftFromSignal(topSignal, collectedAt)
-      const draft = await enrichDraftWithLlm(baseDraft, topSignal, env)
+      const draft = await enrichDraftWithLlm(baseDraft, topSignal, settings)
       await persistDraft(config, draft)
       draftCount = 1
     }
@@ -370,11 +373,12 @@ export async function handleAutoblog(
   now = new Date(),
 ) {
   if (req.method !== 'GET') return sendJson(res, 405, { error: 'method_not_allowed' })
-  if (!hasBearerToken(req.headers, env.cronSecret)) return sendJson(res, 401, { error: 'unauthorized' })
-  if (!getSupabaseConfig(env)) return sendJson(res, 503, { error: 'autoblog_not_configured' })
+  const settings = getAutoblogSettings(env)
+  if (!hasBearerToken(req.headers, settings.cronSecret)) return sendJson(res, 401, { error: 'unauthorized' })
+  if (!getSupabaseConfig(settings)) return sendJson(res, 503, { error: 'autoblog_not_configured' })
 
   try {
-    return sendJson(res, 200, await runDailyAutoblog(env, now))
+    return sendJson(res, 200, await runDailyAutoblog(settings, now))
   } catch (error) {
     const code = error instanceof Error && error.message === 'autoblog_not_configured'
       ? 'autoblog_not_configured'

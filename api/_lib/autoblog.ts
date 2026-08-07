@@ -34,6 +34,19 @@ export type AutoblogEnvironment = {
   llmApiKey?: string
   llmModel?: string
   feeds?: string
+  CRON_SECRET?: string
+  AUTOBLOG_ADMIN_TOKEN?: string
+  SUPABASE_URL?: string
+  SUPABASE_SERVICE_ROLE_KEY?: string
+  SUPABASE_SECRET_KEY?: string
+  SUPABASE_PUBLIC_KEY?: string
+  SUPABASE_PUBLISHABLE_KEY?: string
+  AUTOBLOG_LLM_ENABLED?: string
+  AUTOBLOG_LLM_ENDPOINT?: string
+  AUTOBLOG_LLM_API_KEY?: string
+  AUTOBLOG_LLM_MODEL?: string
+  AUTOBLOG_FEEDS?: string
+  [key: string]: string | undefined
 }
 
 export type DraftContent = {
@@ -52,6 +65,29 @@ export type DraftInput = {
   content: DraftContent
   sourceUrl: string
   sourceCollectedAt: string
+}
+
+function firstEnvValue(env: AutoblogEnvironment, ...names: string[]) {
+  for (const name of names) {
+    const value = env[name]
+    if (typeof value === 'string' && value.trim()) return value.trim()
+  }
+  return undefined
+}
+
+export function getAutoblogSettings(env: AutoblogEnvironment): AutoblogEnvironment {
+  return {
+    cronSecret: firstEnvValue(env, 'cronSecret', 'CRON_SECRET'),
+    adminToken: firstEnvValue(env, 'adminToken', 'AUTOBLOG_ADMIN_TOKEN'),
+    supabaseUrl: firstEnvValue(env, 'supabaseUrl', 'SUPABASE_URL'),
+    supabaseServiceRoleKey: firstEnvValue(env, 'supabaseServiceRoleKey', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEY'),
+    supabasePublicKey: firstEnvValue(env, 'supabasePublicKey', 'SUPABASE_PUBLIC_KEY', 'SUPABASE_PUBLISHABLE_KEY'),
+    llmEnabled: firstEnvValue(env, 'llmEnabled', 'AUTOBLOG_LLM_ENABLED'),
+    llmEndpoint: firstEnvValue(env, 'llmEndpoint', 'AUTOBLOG_LLM_ENDPOINT'),
+    llmApiKey: firstEnvValue(env, 'llmApiKey', 'AUTOBLOG_LLM_API_KEY'),
+    llmModel: firstEnvValue(env, 'llmModel', 'AUTOBLOG_LLM_MODEL'),
+    feeds: firstEnvValue(env, 'feeds', 'AUTOBLOG_FEEDS'),
+  }
 }
 
 export type SupabaseError = Error & {
@@ -171,12 +207,13 @@ export function getSaoPauloDate(date = new Date()) {
 }
 
 export function getSupabaseConfig(env: AutoblogEnvironment): SupabaseConfig | null {
-  if (!env.supabaseUrl || !env.supabaseServiceRoleKey) return null
+  const settings = getAutoblogSettings(env)
+  if (!settings.supabaseUrl || !settings.supabaseServiceRoleKey) return null
 
   try {
-    const url = new URL(env.supabaseUrl)
+    const url = new URL(settings.supabaseUrl)
     if (url.protocol !== 'https:') return null
-    return { url: url.origin, serviceRoleKey: env.supabaseServiceRoleKey }
+    return { url: url.origin, serviceRoleKey: settings.supabaseServiceRoleKey }
   } catch {
     return null
   }
