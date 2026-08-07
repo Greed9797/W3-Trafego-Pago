@@ -1,6 +1,6 @@
 # Autoblog de Tráfego Pago — Especificação
 
-**Status**: Draft aprovado pelo “dale” do usuário; implementação em andamento.
+**Status**: Implementado; validação feature-level registrada em `validation.md`.
 
 ## Objetivo
 

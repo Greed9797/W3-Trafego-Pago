@@ -11,6 +11,6 @@
 
 ## Handoff
 
-Feature em especificação: `autoblog-trafego-pago`.
+Feature concluída: `autoblog-trafego-pago`.
 
-Nenhum código da feature foi implementado ainda. Próximo passo: criar contexto, design e tarefas TLC; depois executar por commits atômicos. O projeto está limpo na branch `main`. Não há credenciais de Supabase, IA ou pesquisa no repositório.
+T1–T8 foram executadas em commits atômicos na branch `main`. Build, testes do autoblog e lint direcionado passam. O lint global conserva dois erros preexistentes nos `button.tsx`. Migration e variáveis externas ainda precisam ser aplicadas pelo operador na Vercel/Supabase; nenhum segredo foi commitado.

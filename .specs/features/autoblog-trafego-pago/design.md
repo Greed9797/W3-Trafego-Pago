@@ -1,7 +1,7 @@
 # Autoblog de Tráfego Pago — Design
 
 **Spec**: `.specs/features/autoblog-trafego-pago/spec.md`
-**Status**: Approved by user “dale”; implementation in progress
+**Status**: Approved and implemented
 
 ## Architecture Overview
 

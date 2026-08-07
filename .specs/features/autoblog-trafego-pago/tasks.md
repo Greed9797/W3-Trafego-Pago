@@ -5,7 +5,7 @@
 Implementar estas tarefas com `tlc-spec-driven`: ciclo por tarefa (implementar → gate → revisão de adequação → commit), sem publicar conteúdo ou segredos. Cada tarefa deve ser commitada separadamente.
 
 **Design**: `.specs/features/autoblog-trafego-pago/design.md`
-**Status**: In Progress
+**Status**: Done
 
 ## Test Coverage Matrix
 
@@ -64,7 +64,7 @@ Implementar estas tarefas com `tlc-spec-driven`: ciclo por tarefa (implementar �
 **Requirement**: CAL-01, CAL-02
 **Tests**: unit
 **Gate**: quick
-**Status**: pending
+**Status**: done
 
 ### T3: Add Supabase schema and server contracts
 
