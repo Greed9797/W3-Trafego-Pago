@@ -1,4 +1,4 @@
-import { BLOG_ARTICLES, getArticleBySlug } from '@/lib/blog'
+import { BLOG_ARTICLES, type BlogArticle } from '@/lib/blog'
 
 const SITE_URL = 'https://w3trafegopago.com.br'
 
@@ -8,8 +8,8 @@ const HOME_SEO = {
 }
 
 const BLOG_SEO = {
-  title: 'Blog W3 Tráfego Pago | Estratégias para anúncios que vendem',
-  description: 'Estratégia, Meta Ads, Google Ads, criativos e métricas para transformar tráfego pago em crescimento previsível para e-commerce.',
+  title: 'Blog de Tráfego Pago | Google Ads, Meta Ads e Performance | W3',
+  description: 'Análises e guias de tráfego pago, Google Ads, Meta Ads, criativos, métricas e e-commerce para transformar mídia em crescimento previsível.',
 }
 
 function upsertMeta(attribute: 'name' | 'property', key: string, content: string) {
@@ -66,10 +66,10 @@ function getSlug(pathname: string) {
   }
 }
 
-export function updateDocumentMetadata(pathname: string) {
+export function updateDocumentMetadata(pathname: string, articleCatalog: BlogArticle[] = BLOG_ARTICLES) {
   const path = getPathname(pathname)
   const isBlog = path === '/blog' || path.startsWith('/blog/')
-  const article = getArticleBySlug(getSlug(path))
+  const article = articleCatalog.find((candidate) => candidate.slug === getSlug(path))
   const isUnknownArticle = isBlog && path !== '/blog' && !article
   const seo = article
     ? {
@@ -129,7 +129,7 @@ export function updateDocumentMetadata(pathname: string) {
           description: BLOG_SEO.description,
           inLanguage: 'pt-BR',
           publisher: { '@type': 'Organization', name: 'W3 Tráfego Pago', url: SITE_URL },
-          blogPost: BLOG_ARTICLES.map((blogArticle) => ({
+          blogPost: articleCatalog.map((blogArticle) => ({
             '@type': 'BlogPosting',
             headline: blogArticle.title,
             url: `${SITE_URL}${articlePath(blogArticle.slug)}`,

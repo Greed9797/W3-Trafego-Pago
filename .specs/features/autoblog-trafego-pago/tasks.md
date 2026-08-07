@@ -114,7 +114,7 @@ Implementar estas tarefas com `tlc-spec-driven`: ciclo por tarefa (implementar â
 **Requirement**: BLOG-01, SEO-01
 **Tests**: none (manual/visual)
 **Gate**: build
-**Status**: pending
+**Status**: done
 
 ### T8: Wire production configuration and complete gates
 

@@ -17,6 +17,7 @@ import {
   BLOG_CATEGORIES,
   type BlogArticle,
 } from '@/lib/blog'
+import { updateDocumentMetadata } from '@/lib/seo'
 
 const BLOG_NAV = [
   { label: 'Início', href: '/blog' },
@@ -252,7 +253,7 @@ function ArticleCard({ article, compact = false }: { article: BlogArticle; compa
   )
 }
 
-function BlogHero() {
+function BlogHero({ articleCount }: { articleCount: number }) {
   return (
     <section className="relative isolate overflow-hidden border-b border-white/10">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_70%_at_75%_20%,hsl(25_95%_53%_/_0.22),transparent_65%)]" />
@@ -261,12 +262,12 @@ function BlogHero() {
         <div>
           <div className="flex items-center gap-3 font-body text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
             <span className="h-px w-8 bg-primary" />
-            W3 Tráfego Pago
+            W3 / Blog de tráfego pago
           </div>
           <h1 className="mt-6 max-w-3xl font-display text-[clamp(3.25rem,8vw,7.4rem)] font-bold leading-[0.88] tracking-[-0.07em] text-white">
-            Menos achismo.
+            Decisões melhores
             <br />
-            <span className="text-primary">Mais vendas.</span>
+            <span className="text-primary">antes do clique.</span>
           </h1>
           <p className="mt-7 max-w-xl font-body text-base leading-7 text-white/65 md:text-lg">
             Estratégia, mídia e dados para quem quer transformar tráfego pago em uma operação previsível de crescimento.
@@ -285,6 +286,10 @@ function BlogHero() {
               Falar com especialista
             </a>
           </div>
+          <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 font-body text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">
+            <span>{articleCount} artigos publicados</span>
+            <span>Google Ads · Meta Ads · E-commerce</span>
+          </div>
         </div>
 
         <div className="relative mx-auto w-full max-w-md">
@@ -292,7 +297,7 @@ function BlogHero() {
           <div className="relative overflow-hidden rounded-[1.5rem] border border-white/15 bg-white/[0.06] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-7">
             <div className="flex items-center justify-between border-b border-white/10 pb-5">
               <div>
-                <p className="font-body text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">Playbook W3</p>
+                <p className="font-body text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">Radar W3</p>
                 <p className="mt-1 font-display text-xl font-bold tracking-[-0.04em] text-white">Performance sem ruído</p>
               </div>
               <BarChart3 className="size-6 text-primary" />
@@ -320,6 +325,23 @@ function BlogHero() {
   )
 }
 
+function BlogTopicBar() {
+  return (
+    <section className="border-b border-black/10 bg-[#f2f1ee] text-[#0d0d0d]">
+      <div className="mx-auto flex w-[min(1200px,calc(100vw-32px))] flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between">
+        <p className="font-body text-[10px] font-bold uppercase tracking-[0.18em] text-[#6b6b6b]">Explore por assunto</p>
+        <nav aria-label="Categorias do blog" className="flex flex-wrap gap-x-5 gap-y-2">
+          {BLOG_CATEGORIES.filter((category) => category !== 'Todos').map((category) => (
+            <a key={category} href="/blog#artigos" className="font-body text-xs font-semibold text-[#575757] transition-colors hover:text-[#c2440a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c2440a]">
+              {category}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </section>
+  )
+}
+
 function FeaturedArticles({ articles }: { articles: BlogArticle[] }) {
   const [featuredArticle, ...supportingArticles] = articles.slice(0, 3)
 
@@ -330,7 +352,7 @@ function FeaturedArticles({ articles }: { articles: BlogArticle[] }) {
       <div className="mx-auto w-[min(1200px,calc(100vw-32px))]">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
-            <p className="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-[#c2440a]">Comece por aqui</p>
+            <p className="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-[#c2440a]">Artigos mais recentes</p>
             <h2 className="mt-3 max-w-xl font-display text-4xl font-bold leading-[0.95] tracking-[-0.05em] md:text-6xl">Ideias para fazer a verba trabalhar melhor.</h2>
           </div>
           <p className="max-w-xs font-body text-sm leading-6 text-[#575757]">Conteúdo direto ao ponto para decisões melhores antes, durante e depois da campanha.</p>
@@ -361,7 +383,7 @@ function ArticleCatalog({ articles }: { articles: BlogArticle[] }) {
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
             <p className="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-[#c2440a]">Arquivo W3</p>
-            <h2 className="mt-3 font-display text-4xl font-bold leading-none tracking-[-0.05em] md:text-6xl">Todos os artigos</h2>
+            <h2 className="mt-3 font-display text-4xl font-bold leading-none tracking-[-0.05em] md:text-6xl">Todos os artigos e matérias</h2>
           </div>
           <span className="font-body text-xs font-semibold uppercase tracking-[0.12em] text-[#6b6b6b]">{articles.length} leituras para começar</span>
         </div>
@@ -417,6 +439,25 @@ function BlogCta() {
   )
 }
 
+function BlogRadar() {
+  return (
+    <section className="bg-[#f2f1ee] pb-24 text-[#0d0d0d] md:pb-32">
+      <div className="mx-auto w-[min(1200px,calc(100vw-32px))] border-t border-black/10 pt-12 md:pt-16">
+        <div className="grid gap-8 rounded-[1.75rem] bg-[#0d0d0d] p-7 text-white md:grid-cols-[1fr_auto] md:items-end md:p-10">
+          <div>
+            <p className="font-body text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Radar W3</p>
+            <h2 className="mt-4 max-w-2xl font-display text-3xl font-bold leading-[0.98] tracking-[-0.05em] md:text-5xl">O que muda na plataforma precisa virar decisão, não ruído.</h2>
+            <p className="mt-4 max-w-2xl font-body text-sm leading-6 text-white/60">Acompanhe análises de Google Ads, Meta Ads, criativos e métricas com contexto para quem precisa operar e crescer.</p>
+          </div>
+          <a href="/#diagnostico" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3.5 font-body text-[11px] font-bold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+            Falar com a W3 <ArrowUpRight className="size-4" />
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function BlogFooter() {
   return (
     <footer className="border-t border-white/10 bg-[#080808] py-8">
@@ -434,9 +475,11 @@ function BlogFooter() {
 function BlogIndex({ articles }: { articles: BlogArticle[] }) {
   return (
     <>
-      <BlogHero />
+      <BlogHero articleCount={articles.length} />
+      <BlogTopicBar />
       <FeaturedArticles articles={articles} />
       <ArticleCatalog articles={articles} />
+      <BlogRadar />
       <BlogCta />
     </>
   )
@@ -478,7 +521,7 @@ function ArticleView({ article, articles }: { article: BlogArticle; articles: Bl
             <h1 className="mt-5 font-display text-[clamp(2.8rem,7vw,6.6rem)] font-bold leading-[0.9] tracking-[-0.07em] text-white">{article.title}</h1>
             <p className="mt-7 max-w-2xl font-body text-lg leading-8 text-white/65">{article.excerpt}</p>
             <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 font-body text-[10px] font-semibold uppercase tracking-[0.12em] text-white/45">
-              <span>{article.date}</span>
+              <time dateTime={article.isoDate}>{article.date}</time>
               <span>{article.readTime}</span>
               <span>Por W3 Tráfego Pago</span>
             </div>
@@ -568,6 +611,9 @@ function BlogLoading() {
 
 export function BlogPage({ pathname }: BlogPageProps) {
   const { articles, loaded } = useBlogArticles()
+  useEffect(() => {
+    updateDocumentMetadata(pathname, articles)
+  }, [articles, pathname])
   const slug = pathname.replace(/^\/blog\/?/, '').split('/')[0]
   const article = slug ? articles.find((candidate) => candidate.slug === slug) : undefined
   const waitingForRemoteArticle = Boolean(slug && !article && !loaded)
