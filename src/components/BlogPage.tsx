@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ArrowDownRight,
   ArrowLeft,
@@ -47,6 +47,86 @@ function sectionId(heading: string) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === 'object')
+}
+
+function normalizeRemoteArticle(value: unknown): BlogArticle | null {
+  if (!isRecord(value)) return null
+
+  const slug = typeof value.slug === 'string' ? value.slug.trim() : ''
+  const title = typeof value.title === 'string' ? value.title.trim() : ''
+  const excerpt = typeof value.excerpt === 'string' ? value.excerpt.trim() : ''
+  const category = typeof value.category === 'string' && BLOG_CATEGORIES.includes(value.category as (typeof BLOG_CATEGORIES)[number])
+    ? value.category as BlogArticle['category']
+    : 'Estratégia'
+  const sections = Array.isArray(value.sections)
+    ? value.sections.filter((section): section is BlogArticle['sections'][number] => {
+        if (!isRecord(section) || typeof section.heading !== 'string' || !Array.isArray(section.paragraphs)) return false
+        return section.paragraphs.every((paragraph) => typeof paragraph === 'string')
+      })
+    : []
+
+  if (!slug || !title || !excerpt || sections.length === 0) return null
+
+  return {
+    slug,
+    title,
+    excerpt,
+    category,
+    date: typeof value.date === 'string' ? value.date : 'Atualizado recentemente',
+    isoDate: typeof value.isoDate === 'string' ? value.isoDate : new Date().toISOString().slice(0, 10),
+    readTime: typeof value.readTime === 'string' ? value.readTime : '5 min de leitura',
+    image: typeof value.image === 'string' ? value.image : '',
+    accent: typeof value.accent === 'string' ? value.accent : 'orange',
+    sections,
+  }
+}
+
+function mergeRemoteArticles(value: unknown) {
+  const remoteArticles = isRecord(value) && Array.isArray(value.articles)
+    ? value.articles.map(normalizeRemoteArticle).filter((article): article is BlogArticle => Boolean(article))
+    : []
+  const fallbackBySlug = new Map(BLOG_ARTICLES.map((article) => [article.slug, article]))
+  const merged = new Map(BLOG_ARTICLES.map((article) => [article.slug, article]))
+
+  for (const remoteArticle of remoteArticles) {
+    const fallback = fallbackBySlug.get(remoteArticle.slug)
+    merged.set(remoteArticle.slug, {
+      ...fallback,
+      ...remoteArticle,
+      image: remoteArticle.image || fallback?.image || '',
+    })
+  }
+
+  return [...merged.values()].sort((left, right) => right.isoDate.localeCompare(left.isoDate))
+}
+
+function useBlogArticles() {
+  const [articles, setArticles] = useState<BlogArticle[]>(BLOG_ARTICLES)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    let active = true
+
+    fetch('/api/blog', { headers: { Accept: 'application/json' } })
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload: unknown) => {
+        if (active) setArticles(mergeRemoteArticles(payload))
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setLoaded(true)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
+
+  return { articles, loaded }
 }
 
 function BlogHeader() {
@@ -127,12 +207,14 @@ function ArticleCover({ article, compact = false }: { article: BlogArticle; comp
 
   return (
     <div className={`blog-cover relative isolate overflow-hidden bg-gradient-to-br ${accentStyle} ${compact ? 'min-h-44' : 'min-h-60 md:min-h-72'}`}>
-      <img
-        src={article.image}
-        alt=""
-        loading={compact ? 'lazy' : 'eager'}
-        className="absolute inset-0 size-full object-cover opacity-70 mix-blend-screen transition-transform duration-500 ease-out group-hover:scale-105"
-      />
+      {article.image && (
+        <img
+          src={article.image}
+          alt=""
+          loading={compact ? 'lazy' : 'eager'}
+          className="absolute inset-0 size-full object-cover opacity-70 mix-blend-screen transition-transform duration-500 ease-out group-hover:scale-105"
+        />
+      )}
       <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,rgba(0,0,0,0.12)_45%,rgba(0,0,0,0.85)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5">
         <span className="rounded-full border border-white/25 bg-black/30 px-3 py-1.5 font-body text-[10px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
@@ -238,8 +320,10 @@ function BlogHero() {
   )
 }
 
-function FeaturedArticles() {
-  const [featuredArticle, ...supportingArticles] = BLOG_ARTICLES.slice(0, 3)
+function FeaturedArticles({ articles }: { articles: BlogArticle[] }) {
+  const [featuredArticle, ...supportingArticles] = articles.slice(0, 3)
+
+  if (!featuredArticle) return null
 
   return (
     <section className="bg-[#f2f1ee] py-20 text-[#0d0d0d] md:py-28">
@@ -265,11 +349,11 @@ function FeaturedArticles() {
   )
 }
 
-function ArticleCatalog() {
+function ArticleCatalog({ articles }: { articles: BlogArticle[] }) {
   const [activeCategory, setActiveCategory] = useState<(typeof BLOG_CATEGORIES)[number]>('Todos')
-  const articles = activeCategory === 'Todos'
-    ? BLOG_ARTICLES.slice(3)
-    : BLOG_ARTICLES.filter((article) => article.category === activeCategory)
+  const visibleArticles = activeCategory === 'Todos'
+    ? articles.slice(3)
+    : articles.filter((article) => article.category === activeCategory)
 
   return (
     <section id="artigos" className="scroll-mt-20 bg-[#f2f1ee] pb-24 text-[#0d0d0d] md:pb-32">
@@ -279,7 +363,7 @@ function ArticleCatalog() {
             <p className="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-[#c2440a]">Arquivo W3</p>
             <h2 className="mt-3 font-display text-4xl font-bold leading-none tracking-[-0.05em] md:text-6xl">Todos os artigos</h2>
           </div>
-          <span className="font-body text-xs font-semibold uppercase tracking-[0.12em] text-[#6b6b6b]">{BLOG_ARTICLES.length} leituras para começar</span>
+          <span className="font-body text-xs font-semibold uppercase tracking-[0.12em] text-[#6b6b6b]">{articles.length} leituras para começar</span>
         </div>
 
         <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filtrar artigos por categoria">
@@ -297,12 +381,12 @@ function ArticleCatalog() {
         </div>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {articles.map((article) => (
+          {visibleArticles.map((article) => (
             <ArticleCard key={article.slug} article={article} />
           ))}
         </div>
 
-        {articles.length === 0 && (
+        {visibleArticles.length === 0 && (
           <div className="mt-10 rounded-2xl border border-dashed border-black/20 p-10 text-center">
             <p className="font-body text-sm text-[#575757]">Estamos preparando novos conteúdos para essa categoria.</p>
           </div>
@@ -347,20 +431,20 @@ function BlogFooter() {
   )
 }
 
-function BlogIndex() {
+function BlogIndex({ articles }: { articles: BlogArticle[] }) {
   return (
     <>
       <BlogHero />
-      <FeaturedArticles />
-      <ArticleCatalog />
+      <FeaturedArticles articles={articles} />
+      <ArticleCatalog articles={articles} />
       <BlogCta />
     </>
   )
 }
 
-function RelatedArticles({ article }: { article: BlogArticle }) {
-  const sameCategory = BLOG_ARTICLES.filter((candidate) => candidate.category === article.category && candidate.slug !== article.slug)
-  const related = [...sameCategory, ...BLOG_ARTICLES.filter((candidate) => candidate.slug !== article.slug && candidate.category !== article.category)].slice(0, 2)
+function RelatedArticles({ article, articles }: { article: BlogArticle; articles: BlogArticle[] }) {
+  const sameCategory = articles.filter((candidate) => candidate.category === article.category && candidate.slug !== article.slug)
+  const related = [...sameCategory, ...articles.filter((candidate) => candidate.slug !== article.slug && candidate.category !== article.category)].slice(0, 2)
 
   return (
     <section className="bg-[#f2f1ee] py-20 text-[#0d0d0d] md:py-28">
@@ -382,7 +466,7 @@ function RelatedArticles({ article }: { article: BlogArticle }) {
   )
 }
 
-function ArticleView({ article }: { article: BlogArticle }) {
+function ArticleView({ article, articles }: { article: BlogArticle; articles: BlogArticle[] }) {
   return (
     <>
       <section className="relative isolate overflow-hidden border-b border-white/10 bg-[#080808]">
@@ -457,7 +541,7 @@ function ArticleView({ article }: { article: BlogArticle }) {
         </div>
       </section>
 
-      <RelatedArticles article={article} />
+      <RelatedArticles article={article} articles={articles} />
       <BlogCta />
     </>
   )
@@ -474,14 +558,24 @@ function BlogNotFound() {
   )
 }
 
+function BlogLoading() {
+  return (
+    <main className="mx-auto flex min-h-[70vh] w-[min(800px,calc(100vw-32px))] items-center py-20">
+      <p className="font-body text-sm uppercase tracking-[0.16em] text-white/55">Carregando conteúdo editorial…</p>
+    </main>
+  )
+}
+
 export function BlogPage({ pathname }: BlogPageProps) {
+  const { articles, loaded } = useBlogArticles()
   const slug = pathname.replace(/^\/blog\/?/, '').split('/')[0]
-  const article = slug ? BLOG_ARTICLES.find((candidate) => candidate.slug === slug) : undefined
+  const article = slug ? articles.find((candidate) => candidate.slug === slug) : undefined
+  const waitingForRemoteArticle = Boolean(slug && !article && !loaded)
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#080808] text-white">
       <BlogHeader />
-      {slug && !article ? <BlogNotFound /> : article ? <ArticleView article={article} /> : <BlogIndex />}
+      {waitingForRemoteArticle ? <BlogLoading /> : slug && !article ? <BlogNotFound /> : article ? <ArticleView article={article} articles={articles} /> : <BlogIndex articles={articles} />}
       <BlogFooter />
     </div>
   )

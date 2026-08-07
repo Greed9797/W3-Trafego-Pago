@@ -104,7 +104,7 @@ Implementar estas tarefas com `tlc-spec-driven`: ciclo por tarefa (implementar â
 **Requirement**: DATA-02, AC-10
 **Tests**: unit + handler contract
 **Gate**: full
-**Status**: pending
+**Status**: done
 
 ### T7: Refine standard blog visual identity and SEO
 
