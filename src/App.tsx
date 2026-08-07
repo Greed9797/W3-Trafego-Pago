@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navbar } from '@/components/Navbar'
 import { BlogPage } from '@/components/BlogPage'
+import { AdminAutoblogPage } from '@/components/AdminAutoblogPage'
 import { Hero } from '@/components/Hero'
 import { Methodology } from '@/components/Methodology'
 import { Stats } from '@/components/Stats'
@@ -17,15 +18,20 @@ function isBlogPath(pathname: string) {
   return pathname === '/blog' || pathname.startsWith('/blog/')
 }
 
+function isAdminPath(pathname: string) {
+  return pathname === '/admin/autoblog' || pathname.startsWith('/admin/autoblog/')
+}
+
 export default function App() {
   const [pathname] = useState(() => window.location.pathname)
 
   useEffect(() => {
+    if (isAdminPath(pathname)) return
     updateDocumentMetadata(pathname)
   }, [pathname])
 
   useEffect(() => {
-    if (isBlogPath(pathname)) return
+    if (isBlogPath(pathname) || isAdminPath(pathname)) return
 
     gsap.config({ nullTargetWarn: false })
 
@@ -43,6 +49,10 @@ export default function App() {
 
   if (isBlogPath(pathname)) {
     return <BlogPage pathname={pathname} />
+  }
+
+  if (isAdminPath(pathname)) {
+    return <AdminAutoblogPage />
   }
 
   return (

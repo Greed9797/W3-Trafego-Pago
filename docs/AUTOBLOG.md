@@ -6,6 +6,7 @@
 - `supabase/migrations/001_autoblog.sql`: posts, sinais, runs, keywords, índices e RLS.
 - `GET /api/cron/autoblog`: coleta diária protegida e idempotente.
 - `POST /api/admin/autoblog/approve`: aprovação humana protegida de drafts.
+- `/admin/autoblog`: painel protegido para acompanhar programados, drafts e publicados.
 - `GET /api/blog`: posts publicados para hidratação do blog, com fallback estático.
 - `vercel.json`: cron de produção às 12:00 UTC, equivalente a 09:00 no horário de São Paulo.
 
@@ -22,6 +23,8 @@
 4. Para enriquecer drafts com IA, defina `AUTOBLOG_LLM_ENABLED=true`, endpoint, modelo e chave. Com a opção desligada, o sistema cria um draft determinístico com fonte e checklist de revisão.
 
 Não envie chaves neste chat e não use a service role no frontend.
+
+O painel usa uma sessão HttpOnly, com expiração de oito horas. O token administrativo é enviado apenas no login e não é salvo em `localStorage`. A rota de aprovação continua aceitando Bearer para automações internas, mas a interface usa cookie protegido.
 
 ## Fluxo diário
 
