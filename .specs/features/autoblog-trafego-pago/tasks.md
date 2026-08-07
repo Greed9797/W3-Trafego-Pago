@@ -84,7 +84,7 @@ Implementar estas tarefas com `tlc-spec-driven`: ciclo por tarefa (implementar â
 **Requirement**: AUTO-01, AUTO-02, AUTO-03, AUTO-04
 **Tests**: unit + handler contract
 **Gate**: full
-**Status**: pending
+**Status**: done
 
 ### T5: Implement protected draft approval
 

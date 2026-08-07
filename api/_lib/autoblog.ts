@@ -3,6 +3,7 @@ export const EDITORIAL_TIMEZONE = 'America/Sao_Paulo'
 export const ALLOWED_SOURCE_HOSTS = [
   'trends.google.com',
   'blog.google',
+  'ads-developers.googleblog.com',
   'support.google.com',
   'facebook.com',
   'about.fb.com',
@@ -31,6 +32,7 @@ export type AutoblogEnvironment = {
   llmEnabled?: string
   llmApiKey?: string
   llmModel?: string
+  feeds?: string
 }
 
 export type DraftContent = {
