@@ -84,7 +84,10 @@
         fbq('track', 'PageView', {}, { eventID: window._pvId })
       })()
     </script>
-  </head>
+    <!-- W3 tracking unificado (OpenObserve) -->
+  <script>window.oo=window.oo||function(){(oo.q=oo.q||[]).push(arguments)}</script>
+  <script async src="https://track.w3bsite.com.br/px.js" data-site="w3trafegopago"></script>
+</head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
