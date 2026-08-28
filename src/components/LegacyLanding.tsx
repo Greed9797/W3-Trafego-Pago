@@ -100,6 +100,26 @@ const REVEAL_STEP = 0.06
 // O stagger para no 4º item: lista longa escalonada faz a página parecer lenta.
 const REVEAL_MAX_STEPS = 3
 
+// Contagem dos números da faixa de resultados. O HTML já traz o valor final escrito,
+// então sem JS — ou com prefers-reduced-motion — a faixa continua correta: a animação
+// só reescreve o texto enquanto roda.
+const COUNT_SELECTOR = '.proof-item strong'
+const COUNT_PATTERN = /^(\D*)(\d+)(\D*)$/
+const COUNT_DURATION = 2800
+
+interface CountTarget {
+  el: HTMLElement
+  prefix: string
+  value: number
+  suffix: string
+}
+
+// Sai disparado e assenta no fim: metade do percurso acontece nos primeiros 280ms,
+// que é o que dá a sensação de "subiu rápido" sem encurtar os ~3 segundos.
+function easeOutExpo(t: number): number {
+  return t === 1 ? 1 : 1 - 2 ** (-10 * t)
+}
+
 function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
@@ -174,6 +194,71 @@ export function LegacyLanding() {
     return () => {
       observer.disconnect()
       document.documentElement.classList.remove('has-motion')
+    }
+  }, [page.markup])
+
+  // Números da faixa de resultados sobem de 0 ao entrarem em cena, uma vez só.
+  useEffect(() => {
+    if (!page.markup || !('IntersectionObserver' in window)) return
+    if (prefersReducedMotion()) return
+
+    const targets: CountTarget[] = []
+
+    document.querySelectorAll<HTMLElement>(COUNT_SELECTOR).forEach((el) => {
+      const parsed = COUNT_PATTERN.exec(el.textContent?.trim() ?? '')
+      if (!parsed) return
+
+      const value = Number(parsed[2])
+      if (!Number.isFinite(value)) return
+
+      targets.push({ el, prefix: parsed[1], value, suffix: parsed[3] })
+    })
+
+    if (!targets.length) return
+
+    const frames = new Set<number>()
+    const write = (target: CountTarget, value: number) => {
+      target.el.textContent = `${target.prefix}${value}${target.suffix}`
+    }
+
+    const animate = (target: CountTarget) => {
+      const start = performance.now()
+
+      const step = (now: number) => {
+        const progress = Math.min((now - start) / COUNT_DURATION, 1)
+        write(target, Math.round(easeOutExpo(progress) * target.value))
+        if (progress < 1) frames.add(requestAnimationFrame(step))
+      }
+
+      frames.add(requestAnimationFrame(step))
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          observer.unobserve(entry.target)
+
+          const target = targets.find((candidate) => candidate.el === entry.target)
+          if (target) animate(target)
+        })
+      },
+      { threshold: 0.4 }
+    )
+
+    // Zera já, e não ao entrar em cena: o observer só responde no frame seguinte ao
+    // scroll, e nesse intervalo o valor final piscava na tela antes de saltar para o
+    // começo da contagem.
+    targets.forEach((target) => {
+      write(target, 0)
+      observer.observe(target.el)
+    })
+
+    return () => {
+      observer.disconnect()
+      frames.forEach((id) => cancelAnimationFrame(id))
+      // Desmontar no meio da contagem não pode deixar um número parcial na tela.
+      targets.forEach((target) => write(target, target.value))
     }
   }, [page.markup])
 
