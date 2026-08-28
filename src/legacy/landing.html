@@ -1090,6 +1090,14 @@
         }
 
         .own-case-stat {
+            /* Os rótulos têm de uma a três linhas ("seguidores" contra "produtos
+               enviados por mês"). O grid estica todos os cards à altura do maior,
+               então sem centrar nos dois eixos o conteúdo encosta no topo e a
+               fileira fica com buracos de tamanhos diferentes embaixo. */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
             padding: var(--sp-5);
             background-color: rgba(20, 20, 20, 0.82);
             background-image: var(--sheen);
