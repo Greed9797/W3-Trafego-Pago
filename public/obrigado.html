@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro concluído · W3 Tráfego Pago</title>
+
+    <!-- Página de obrigado não entra em busca: indexá-la deixa a confirmação
+         acessível sem passar pelo formulário e polui a contagem de conversão. -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#F76B00">
+    <meta name="description" content="Cadastro confirmado. Nossa equipe entra em contato pelo telefone informado.">
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/assets/fonts/fonts.css">
+    <link rel="preload" href="/assets/fonts/files/syne-latin-700-normal-AF3Rs61n.woff2" as="font" type="font/woff2" crossorigin="">
+
+    <style>
+        /* ── Tokens ───────────────────────────────────────────────────
+           Mesmos valores da landing. A página de obrigado é a continuação
+           imediata do formulário: qualquer desvio de cor ou tipografia aqui
+           lê como "caí em outro site" bem no momento mais frágil do funil. */
+        :root {
+            --bg-base: #0a0a0a;
+            --bg-deep: #050505;
+            --bg-card: #161616;
+            --bg-card-alt: #1c1c1c;
+            --bg-elevated: #111111;
+
+            --primary: #F76B00;
+            --primary-hover: #D95E00;
+            --primary-subtle: rgba(247, 107, 0, 0.12);
+            --primary-line: rgba(247, 107, 0, 0.45);
+
+            --text-light: #ffffff;
+            --text-primary: #c8c8c8;
+            --text-secondary: #a0a0a0;
+            --text-muted: #949494;
+
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-card: rgba(255, 255, 255, 0.1);
+            --border-card-strong: rgba(255, 255, 255, 0.16);
+
+            --font-heading: 'Syne', 'Avenir Next', 'Segoe UI', sans-serif;
+            --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+            --radius: 8px;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0) 42%);
+            --edge-light: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+            --sp-2: 8px;
+            --sp-3: 12px;
+            --sp-4: 16px;
+            --sp-5: 20px;
+            --sp-6: 24px;
+            --sp-8: 32px;
+            --sp-10: 40px;
+            --sp-12: 48px;
+            --sp-16: 64px;
+            --sp-20: 80px;
+            --sp-24: 96px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            font-synthesis: none;
+            scrollbar-gutter: stable;
+        }
+
+        body {
+            background: var(--bg-base);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.68;
+            letter-spacing: 0.005em;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--text-light);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        .highlight { color: var(--primary); }
+
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 3px;
+            border-radius: 4px;
+        }
+
+        /* ── Topo ─────────────────────────────────────────────────────── */
+        .topbar {
+            background: var(--primary);
+            padding: var(--sp-3) var(--sp-6);
+            text-align: center;
+        }
+
+        /* Preto sobre o laranja da marca: branco cai para 2,97:1 e reprova
+           em AA. Mesma decisão do botão primário da landing. */
+        .topbar p {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+            color: #0a0a0a;
+        }
+
+        /* Cabeçalho sem navegação: nesta página a única tarefa é atender o
+           telefone. Links para outras seções seriam rota de fuga. */
+        .site-header {
+            background: rgba(10, 10, 10, 0.92);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--sp-4) var(--sp-6);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-inner img { display: block; }
+
+        /* ── Confirmação ──────────────────────────────────────────────── */
+        .confirm {
+            position: relative;
+            overflow: hidden;
+            background: #000000;
+            padding: clamp(64px, 8vw, 104px) 0 clamp(64px, 8vw, 96px);
+            text-align: center;
+        }
+
+        .confirm::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+            background-size: 128px 128px;
+            -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 70%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 0, #000 70%, transparent 100%);
+        }
+
+        .confirm > .container { position: relative; z-index: 1; }
+
+        .confirm-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--sp-2);
+            padding: 7px var(--sp-4);
+            margin-bottom: var(--sp-6);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: var(--primary-subtle);
+            border: 1px solid var(--primary-line);
+            border-radius: 999px;
+        }
+
+        /* Check desenhado em CSS: um caractere de fonte varia de desenho entre
+           sistemas e um SVG a mais é requisição a mais para 12px de traço. */
+        .confirm-check {
+            width: 14px;
+            height: 8px;
+            border-left: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            transform: rotate(-45deg) translateY(-2px);
+        }
+
+        .confirm h1 {
+            font-size: clamp(2.2rem, 4.6vw, 3.4rem);
+            line-height: 1.08;
+            letter-spacing: -0.035em;
+            max-width: 20ch;
+            margin: 0 auto var(--sp-5);
+            font-variant-numeric: lining-nums tabular-nums;
+        }
+
+        .confirm-lead {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            max-width: 54ch;
+            margin: 0 auto;
+        }
+
+        /* ── Alerta do telefone ───────────────────────────────────────────
+           Elemento de maior peso da página depois do H1. A página inteira
+           existe para que a pessoa atenda a ligação — tratar isso como um
+           aviso discreto seria enterrar a única mensagem que importa. */
+        .alerta {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--sp-5);
+            max-width: 46rem;
+            margin: var(--sp-10) auto 0;
+            padding: var(--sp-6);
+            text-align: left;
+            background-color: var(--primary-subtle);
+            background-image: var(--sheen);
+            border: 1px solid var(--primary-line);
+            border-radius: var(--radius);
+        }
+
+        .alerta-icone {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            border-radius: var(--radius);
+        }
+
+        /* Silhueta de celular em CSS puro. */
+        .alerta-icone span {
+            display: block;
+            width: 15px;
+            height: 24px;
+            border: 2px solid #0a0a0a;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .alerta-icone span::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 2px;
+            width: 5px;
+            height: 2px;
+            background: #0a0a0a;
+            transform: translateX(-50%);
+        }
+
+        .alerta strong {
+            display: block;
+            font-family: var(--font-heading);
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .alerta p { font-size: 0.95rem; line-height: 1.6; color: var(--text-primary); }
+
+        /* ── Passos ───────────────────────────────────────────────────── */
+        .passos { background: var(--bg-base); padding: clamp(56px, 7vw, 88px) 0; }
+
+        .passos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: var(--sp-5);
+        }
+
+        .passo {
+            padding: var(--sp-6);
+            background-color: var(--bg-card);
+            background-image: var(--sheen);
+            box-shadow: var(--edge-light);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+        }
+
+        .passo-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            margin-bottom: var(--sp-5);
+            font-family: var(--font-heading);
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            font-variant-numeric: tabular-nums lining-nums;
+        }
+
+        .passo h3 { font-size: 1.08rem; margin-bottom: var(--sp-2); }
+
+        .passo p { font-size: 0.94rem; line-height: 1.6; color: var(--text-secondary); }
+
+        /* ── Mural de provas ──────────────────────────────────────────── */
+        .provas { background: var(--bg-deep); padding: clamp(56px, 7vw, 88px) 0 clamp(72px, 9vw, 112px); }
+
+        .provas-head { text-align: center; margin-bottom: var(--sp-12); }
+
+        .provas-head h2 {
+            font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+            line-height: 1.12;
+            max-width: 26ch;
+            margin: 0 auto;
+        }
+
+        .provas-head p {
+            max-width: 58ch;
+            margin: var(--sp-5) auto 0;
+            font-size: 0.98rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        /* 3 colunas × 2 linhas por página. Número fixo em vez de auto-fill
+           porque a página precisa ter altura previsível: com a contagem
+           variando por viewport, trocar de página faria o bloco pular de
+           tamanho e empurrar o rodapé. */
+        .provas-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: var(--sp-4);
+        }
+
+        /* ── Paginação ────────────────────────────────────────────────── */
+        .provas-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--sp-5);
+            margin-top: var(--sp-8);
+        }
+
+        .provas-seta {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            line-height: 1;
+            color: var(--text-light);
+            background-color: var(--bg-card);
+            background-image: var(--sheen);
+            box-shadow: var(--edge-light);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background-color 0.22s var(--ease), border-color 0.22s var(--ease);
+        }
+
+        .provas-seta:hover:not(:disabled) {
+            background-color: var(--bg-card-alt);
+            border-color: var(--border-card-strong);
+        }
+
+        /* Único estado autorizado a baixar contraste. Sem `cursor: default` o
+           ponteiro seguiria dizendo "clique aqui" num botão que não responde. */
+        .provas-seta:disabled {
+            opacity: 0.38;
+            cursor: default;
+        }
+
+        .provas-paginas { display: flex; align-items: center; gap: var(--sp-2); }
+
+        .provas-ponto {
+            width: 9px;
+            height: 9px;
+            padding: 0;
+            background: var(--border-card-strong);
+            border: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.22s var(--ease), transform 0.22s var(--ease);
+        }
+
+        .provas-ponto:hover { background: var(--text-secondary); }
+
+        .provas-ponto[aria-current="true"] {
+            background: var(--primary);
+            transform: scale(1.25);
+        }
+
+        .provas-contador {
+            margin-top: var(--sp-4);
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums lining-nums;
+        }
+
+        /* É <button> para ser alcançável por teclado. Botão não herda fonte
+           nem cor do documento, então a legenda sairia na fonte do sistema. */
+        .prova {
+            display: block;
+            width: 100%;
+            padding: 0;
+            font: inherit;
+            color: inherit;
+            text-align: left;
+            overflow: hidden;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            cursor: zoom-in;
+            transition: border-color 0.22s var(--ease), transform 0.22s var(--ease);
+        }
+
+        .prova:hover {
+            border-color: var(--border-card-strong);
+            transform: translateY(-2px);
+        }
+
+        /* Os prints são quadrados 540×540, então `1 / 1` com `cover` preenche
+           sem cortar nada da conversa. Fundo escuro: são capturas de WhatsApp
+           em tema escuro — placa clara criaria uma moldura branca em volta de
+           cada um. Sem legenda: o card é o depoimento, texto por cima seria
+           narrar o que já se lê na imagem. */
+        .prova-shot {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            background: var(--bg-elevated);
+        }
+
+        .provas-nota {
+            margin-top: var(--sp-10);
+            text-align: center;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        /* ── Lightbox ─────────────────────────────────────────────────────
+           `position: fixed` explícito: o browser aplica isso a <dialog> em
+           modo modal e sobrescrever com `relative` joga o painel para o canto. */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            margin: auto;
+            width: min(1000px, calc(100vw - 32px));
+            max-width: none;
+            max-height: min(92dvh, 900px);
+            padding: 0;
+            overflow: hidden;
+            background: var(--bg-elevated);
+            color: var(--text-light);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+        }
+
+        .lightbox[open] { display: flex; flex-direction: column; }
+
+        .lightbox::backdrop {
+            background: rgba(5, 5, 5, 0.82);
+            backdrop-filter: blur(6px);
+        }
+
+        .lightbox[open] { animation: boxIn 0.24s var(--ease) both; }
+        .lightbox[open]::backdrop { animation: fadeIn 0.24s var(--ease) both; }
+
+        @keyframes boxIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.99); }
+            to { opacity: 1; transform: none; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .lightbox[open].is-closing { animation: boxOut 0.18s var(--ease) both; }
+        .lightbox[open].is-closing::backdrop { animation: fadeOut 0.18s var(--ease) both; }
+
+        @keyframes boxOut {
+            from { opacity: 1; transform: none; }
+            to { opacity: 0; transform: translateY(8px) scale(0.995); }
+        }
+
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        .lightbox-fechar {
+            position: absolute;
+            top: var(--sp-4);
+            right: var(--sp-4);
+            z-index: 2;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            line-height: 1;
+            color: #ffffff;
+            background-color: var(--bg-card);
+            background-image: var(--sheen);
+            box-shadow: var(--edge-light);
+            border: 1px solid var(--border-card-strong);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background-color 0.22s var(--ease);
+        }
+
+        .lightbox-fechar:hover { background-color: var(--bg-card-alt); }
+
+        .lightbox-figura {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        /* `contain` para o print ampliado nunca ser cortado, e fundo escuro
+           porque as capturas são de WhatsApp em tema escuro — uma placa clara
+           viraria moldura branca em volta da conversa. */
+        .lightbox-figura img {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            object-fit: contain;
+            background: var(--bg-deep);
+        }
+
+        .lightbox-figura figcaption {
+            flex-shrink: 0;
+            padding: var(--sp-4) var(--sp-6);
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-card);
+        }
+
+        .lightbox-figura figcaption strong {
+            font-family: var(--font-heading);
+            color: var(--text-light);
+            margin-right: var(--sp-2);
+        }
+
+        /* ── Rodapé ───────────────────────────────────────────────────── */
+        .site-footer {
+            background: #000000;
+            padding: var(--sp-8) 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--sp-6);
+            flex-wrap: wrap;
+        }
+
+        .footer-inner p { font-size: 0.8rem; color: var(--text-muted); }
+
+        .footer-inner a {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.22s var(--ease);
+        }
+
+        .footer-inner a:hover { color: var(--text-light); }
+
+        /* ── Motion ───────────────────────────────────────────────────── */
+        .has-motion [data-reveal] { opacity: 0; transform: translateY(14px); }
+
+        .has-motion [data-reveal].is-in {
+            opacity: 1;
+            transform: none;
+            transition: opacity 0.42s var(--ease), transform 0.42s var(--ease);
+            transition-delay: var(--reveal-delay, 0s);
+        }
+
+        @media (max-width: 900px) {
+            .passos-grid { grid-template-columns: 1fr; }
+            .alerta { flex-direction: column; gap: var(--sp-4); }
+            /* 2 colunas × 3 linhas: os mesmos 6 por página, redistribuídos. */
+            .provas-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 620px) {
+            .container { padding: 0 var(--sp-5); }
+            .confirm h1 { max-width: 100%; }
+            .provas-grid { grid-template-columns: 1fr; }
+            .footer-inner { flex-direction: column; align-items: flex-start; gap: var(--sp-3); }
+
+            .lightbox {
+                width: 100vw;
+                height: 100dvh;
+                max-height: 100dvh;
+                margin: 0;
+                border: 0;
+                border-radius: 0;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+                animation-delay: 0s !important;
+            }
+            .has-motion [data-reveal] { opacity: 1; transform: none; }
+            .prova:hover { transform: none; }
+        }
+    </style>
+</head>
+
+<body>
+    
+
+    <header class="site-header" data-od-id="site-header">
+        <div class="header-inner">
+            <img src="/w3tp/logo-w3-Cr11bwYq.svg" alt="W3 Tráfego Pago" width="195" height="26" fetchpriority="high" decoding="async">
+        </div>
+    </header>
+
+    <main>
+        <!-- Confirmação -->
+        <section class="confirm" data-od-id="confirmacao">
+            <div class="container">
+                <p class="confirm-badge">
+                    <span class="confirm-check" aria-hidden="true"></span>
+                    Cadastro recebido
+                </p>
+
+                <h1>Cadastro concluído <span class="highlight">com sucesso</span></h1>
+
+                <p class="confirm-lead">
+                    Seus dados chegaram até nós e já estão com o time comercial.
+                    O próximo passo é uma conversa rápida para entender a sua operação.
+                </p>
+
+                <div class="alerta" data-od-id="alerta-telefone">
+                    <div class="alerta-icone" aria-hidden="true"><span></span></div>
+                    <div>
+                        <strong>Fique atento ao seu celular</strong>
+                        <p>
+                            Nossa equipe entra em contato por ligação ou WhatsApp nos próximos
+                            minutos, no número que você informou no cadastro.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Passos -->
+        <section class="passos" data-od-id="passos">
+            <div class="container">
+                <div class="passos-grid">
+                    <article class="passo" data-od-id="passo-salvar-contato">
+                        <p class="passo-num">1</p>
+                        <h3>Salve nosso contato</h3>
+                        <p>
+                            Com o número salvo na agenda, a ligação chega identificada
+                            e não cai como chamada desconhecida.
+                        </p>
+                    </article>
+
+                    <article class="passo" data-od-id="passo-atender">
+                        <p class="passo-num">2</p>
+                        <h3>Atenda a ligação ou responda no WhatsApp</h3>
+                        <p>
+                            A conversa leva poucos minutos. Se não conseguir falar na hora,
+                            é só responder a mensagem que enviamos.
+                        </p>
+                    </article>
+
+                    <article class="passo" data-od-id="passo-preparar">
+                        <p class="passo-num">3</p>
+                        <h3>Tenha seus dados e dúvidas em mãos</h3>
+                        <p>
+                            Faturamento atual, quanto investe em anúncios hoje e onde você
+                            sente que trava. Com isso já alinhamos o plano na primeira conversa.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mural de provas -->
+        <section class="provas" data-od-id="provas">
+            <div class="container">
+                <div class="provas-head">
+                    <h2>Enquanto aguarda nosso contato, veja os <span class="highlight">resultados reais</span> de quem já aplicou nosso método</h2>
+                    <p>Conversas reais com clientes que já rodam com a nossa gestão. Clique em qualquer print para ampliar.</p>
+                </div>
+
+                <div class="provas-grid" id="provasGrid" data-od-id="provas-grid"></div>
+
+                <nav class="provas-nav" id="provasNav" aria-label="Navegação dos depoimentos" data-od-id="provas-paginacao">
+                    <button type="button" class="provas-seta" id="provasAnterior" aria-label="Página anterior">
+                        <span aria-hidden="true">‹</span>
+                    </button>
+                    <div class="provas-paginas" id="provasPontos"></div>
+                    <button type="button" class="provas-seta" id="provasProxima" aria-label="Próxima página">
+                        <span aria-hidden="true">›</span>
+                    </button>
+                </nav>
+
+                <p class="provas-contador" id="provasContador" role="status" aria-live="polite"></p>
+
+                <p class="provas-nota">
+                    Mensagens de clientes reais da W3, publicadas com autorização.
+                    Resultado de um cliente não é promessa de resultado para outro.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer" data-od-id="site-footer">
+        <div class="container footer-inner">
+            <p>© 2026 W3 Tráfego Pago. Todos os direitos reservados.</p>
+            <a href="/blog">Ler o blog enquanto aguarda</a>
+        </div>
+    </footer>
+
+    <dialog class="lightbox" id="lightbox" aria-label="Print ampliado" data-od-id="lightbox">
+        <button type="button" class="lightbox-fechar" id="lightboxFechar" aria-label="Fechar">
+            <span aria-hidden="true">×</span>
+        </button>
+        <figure class="lightbox-figura">
+            <img id="lightboxImg" src="" alt="">
+            <figcaption id="lightboxLegenda"></figcaption>
+        </figure>
+    </dialog>
+
+    <script>
+        // ── Mural de provas ──────────────────────────────────────────────
+        // Para adicionar um depoimento: solte o arquivo em `provas/` e
+        // acrescente uma linha aqui. Grid, lightbox e lazy-load saem de graça —
+        // nada de HTML novo por print.
+        var PROVAS = [
+            './provas/depoimento-01.webp',
+            './provas/depoimento-02.webp',
+            './provas/depoimento-03.webp',
+            './provas/depoimento-04.webp',
+            './provas/depoimento-05.webp',
+            './provas/depoimento-06.webp',
+            './provas/depoimento-07.webp',
+            './provas/depoimento-08.webp',
+            './provas/depoimento-09.webp',
+            './provas/depoimento-10.webp',
+            './provas/depoimento-11.webp',
+            './provas/depoimento-12.webp',
+            './provas/depoimento-13.webp',
+            './provas/depoimento-14.webp',
+            './provas/depoimento-15.webp',
+            './provas/depoimento-16.webp'
+        ];
+
+        // 3 colunas × 2 linhas. Uma página inteira cabe na tela sem rolar,
+        // que é o ponto de paginar em vez de empilhar os 16.
+        var POR_PAGINA = 6;
+
+        (function () {
+            var grid = document.getElementById('provasGrid');
+            var pontos = document.getElementById('provasPontos');
+            var anterior = document.getElementById('provasAnterior');
+            var proxima = document.getElementById('provasProxima');
+            var contador = document.getElementById('provasContador');
+            var nav = document.getElementById('provasNav');
+            if (!grid) return;
+
+            var totalPaginas = Math.ceil(PROVAS.length / POR_PAGINA);
+            var pagina = 0;
+
+            // Com uma página só, os controles seriam decoração que não faz nada.
+            if (totalPaginas < 2 && nav) nav.hidden = true;
+
+            function montarCard(src, indiceGlobal, primeiraPagina) {
+                var card = document.createElement('button');
+                card.type = 'button';
+                card.className = 'prova';
+                card.setAttribute('data-indice', indiceGlobal);
+                card.setAttribute('aria-label', 'Ampliar depoimento ' + (indiceGlobal + 1) + ' de ' + PROVAS.length);
+
+                var img = document.createElement('img');
+                img.className = 'prova-shot';
+                img.src = src;
+                // Descrição honesta: o conteúdo é a conversa, que não dá para
+                // transcrever de forma confiável a partir de uma captura.
+                img.alt = 'Print de conversa com cliente da W3 — depoimento ' + (indiceGlobal + 1);
+                img.width = 540;
+                img.height = 540;
+                // A primeira página nasce com o documento; as outras só existem
+                // depois de um clique, quando lazy já não adianta nada.
+                img.loading = primeiraPagina ? 'eager' : 'lazy';
+                img.decoding = 'async';
+
+                card.appendChild(img);
+                return card;
+            }
+
+            function render(indice, focar) {
+                pagina = Math.max(0, Math.min(indice, totalPaginas - 1));
+
+                var inicio = pagina * POR_PAGINA;
+                var lote = PROVAS.slice(inicio, inicio + POR_PAGINA);
+
+                // Uma fragment só: anexar item a item forçaria um reflow por card.
+                var frag = document.createDocumentFragment();
+                lote.forEach(function (src, i) {
+                    frag.appendChild(montarCard(src, inicio + i, pagina === 0));
+                });
+
+                grid.replaceChildren(frag);
+
+                if (anterior) anterior.disabled = pagina === 0;
+                if (proxima) proxima.disabled = pagina === totalPaginas - 1;
+
+                Array.prototype.forEach.call(pontos ? pontos.children : [], function (b, i) {
+                    b.setAttribute('aria-current', String(i === pagina));
+                });
+
+                if (contador) {
+                    contador.textContent = 'Mostrando ' + (inicio + 1) + '–' +
+                        (inicio + lote.length) + ' de ' + PROVAS.length + ' depoimentos';
+                }
+
+                // Devolve o foco ao primeiro card só quando a troca veio de um
+                // clique — no carregamento inicial roubaria o foco da página.
+                if (focar) {
+                    var alvo = grid.querySelector('.prova');
+                    if (alvo) alvo.focus();
+                }
+            }
+
+            if (pontos) {
+                for (var i = 0; i < totalPaginas; i++) {
+                    var ponto = document.createElement('button');
+                    ponto.type = 'button';
+                    ponto.className = 'provas-ponto';
+                    ponto.setAttribute('data-pagina', i);
+                    ponto.setAttribute('aria-label', 'Ir para a página ' + (i + 1) + ' de ' + totalPaginas);
+                    pontos.appendChild(ponto);
+                }
+
+                pontos.addEventListener('click', function (event) {
+                    var b = event.target.closest('.provas-ponto');
+                    if (b) render(Number(b.dataset.pagina), true);
+                });
+            }
+
+            if (anterior) anterior.addEventListener('click', function () { render(pagina - 1, true); });
+            if (proxima) proxima.addEventListener('click', function () { render(pagina + 1, true); });
+
+            render(0, false);
+        })();
+
+        // ── Lightbox ─────────────────────────────────────────────────────
+        (function () {
+            var box = document.getElementById('lightbox');
+            var img = document.getElementById('lightboxImg');
+            var legenda = document.getElementById('lightboxLegenda');
+            var fechar = document.getElementById('lightboxFechar');
+            var grid = document.getElementById('provasGrid');
+            if (!box || !grid || typeof box.showModal !== 'function') return;
+
+            var reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var fechando = null;
+
+            // Delegação: um listener no grid cobre os 5 prints de hoje e os 20
+            // de amanhã sem religar nada.
+            grid.addEventListener('click', function (event) {
+                var card = event.target.closest('.prova');
+                if (!card) return;
+
+                var i = Number(card.dataset.indice);
+                var src = PROVAS[i];
+                if (!src) return;
+
+                img.src = src;
+                img.alt = 'Print de conversa com cliente da W3 — depoimento ' + (i + 1);
+                legenda.textContent = 'Depoimento ' + (i + 1) + ' de ' + PROVAS.length;
+
+                box.showModal();
+                // showModal trava a interação, mas não o scroll do body.
+                document.documentElement.style.overflow = 'hidden';
+            });
+
+            function encerrar() {
+                if (!box.open) return;
+                if (reduzido) { box.close(); return; }
+                if (fechando) return;
+
+                box.classList.add('is-closing');
+
+                var pronto = function (event) {
+                    // Sem o filtro, a animação de um filho fecharia antes da hora.
+                    if (event && event.animationName !== 'boxOut') return;
+                    clearTimeout(fechando);
+                    fechando = null;
+                    box.removeEventListener('animationend', pronto);
+                    box.classList.remove('is-closing');
+                    box.close();
+                };
+
+                // animationend não dispara com a aba em segundo plano.
+                fechando = setTimeout(pronto, 300);
+                box.addEventListener('animationend', pronto);
+            }
+
+            box.addEventListener('close', function () {
+                clearTimeout(fechando);
+                fechando = null;
+                box.classList.remove('is-closing');
+                document.documentElement.style.overflow = '';
+                img.src = '';
+            });
+
+            // Esc dispara `cancel` e fecharia seco, sem passar pela saída.
+            box.addEventListener('cancel', function (event) {
+                event.preventDefault();
+                encerrar();
+            });
+
+            // Com padding 0 no dialog, clique fora do painel reporta
+            // target === box. É o clique no backdrop.
+            box.addEventListener('click', function (event) {
+                if (event.target === box) encerrar();
+            });
+
+            fechar.addEventListener('click', encerrar);
+        })();
+
+        // ── Revelação na entrada em cena ─────────────────────────────────
+        (function () {
+            var reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduzido || !('IntersectionObserver' in window)) return;
+
+            var alvos = [];
+            var STEP = 0.06;
+            var MAX = 3;
+
+            ['.provas-head', '.alerta'].forEach(function (sel) {
+                Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) {
+                    el.setAttribute('data-reveal', '');
+                    alvos.push(el);
+                });
+            });
+
+            // `.prova` fica de fora: os cards são recriados a cada troca de
+            // página, e observá-los deixaria o observer segurando nós mortos —
+            // além de esconder cards que já nasceram na tela por clique.
+            ['.passo'].forEach(function (sel) {
+                Array.prototype.forEach.call(document.querySelectorAll(sel), function (el, i) {
+                    el.setAttribute('data-reveal', '');
+                    el.style.setProperty('--reveal-delay', (Math.min(i, MAX) * STEP) + 's');
+                    alvos.push(el);
+                });
+            });
+
+            if (!alvos.length) return;
+            document.documentElement.classList.add('has-motion');
+
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('is-in');
+                    observer.unobserve(entry.target);
+                });
+            }, { rootMargin: '0px 0px -12% 0px', threshold: 0.1 });
+
+            alvos.forEach(function (el) { observer.observe(el); });
+        })();
+    </script>
+
+
+
+</body></html>
