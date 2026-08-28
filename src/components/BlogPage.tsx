@@ -205,25 +205,27 @@ function BlogHeader() {
 
 function ArticleCover({ article, compact = false }: { article: BlogArticle; compact?: boolean }) {
   const accentStyle = ACCENT_STYLES[article.accent] ?? ACCENT_STYLES.orange
+  const coverHeight = compact ? 'min-h-[212px]' : 'min-h-[280px] md:min-h-[320px]'
 
   return (
-    <div className={`blog-cover relative isolate overflow-hidden bg-gradient-to-br ${accentStyle} ${compact ? 'min-h-44' : 'min-h-60 md:min-h-72'}`}>
-      {article.image && (
-        <img
-          src={article.image}
-          alt=""
-          loading={compact ? 'lazy' : 'eager'}
-          className="absolute inset-0 size-full object-cover opacity-70 mix-blend-screen transition-transform duration-500 ease-out group-hover:scale-105"
-        />
-      )}
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,rgba(0,0,0,0.12)_45%,rgba(0,0,0,0.85)_100%)]" />
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5">
-        <span className="rounded-full border border-white/25 bg-black/30 px-3 py-1.5 font-body text-[10px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
-          {article.category}
-        </span>
-        <span className="font-body text-[10px] font-medium uppercase tracking-[0.16em] text-white/65">
-          W3 / insight
-        </span>
+    <div className={`blog-cover relative isolate overflow-hidden bg-[#0d0d0d] bg-gradient-to-br ${accentStyle} ${coverHeight}`}>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_42%,rgba(245,89,0,0.22),transparent_32%)]" />
+      <div className={`relative flex flex-col ${coverHeight} p-5 md:p-6`}>
+        <div className="flex items-start justify-between gap-4">
+          <span aria-hidden="true" className="font-body text-sm font-medium tracking-[0.16em] text-primary">///</span>
+          <span className="font-body text-[9px] font-semibold uppercase tracking-[0.2em] text-white/45">
+            {article.category}
+          </span>
+        </div>
+        <div className="mt-auto pt-10">
+          <span className="mb-3 block h-px w-8 bg-primary/70" />
+          <p className={`${compact ? 'text-xl md:text-2xl' : 'text-2xl md:text-4xl'} max-w-[18ch] font-display font-medium leading-[1.02] tracking-[-0.04em] text-white`}>
+            {article.title}
+          </p>
+          <span className="mt-4 inline-flex w-fit rounded-full bg-primary px-3 py-1.5 font-body text-[10px] font-bold uppercase tracking-[0.12em] text-primary-foreground">
+            {article.category}
+          </span>
+        </div>
       </div>
     </div>
   )
@@ -532,7 +534,6 @@ function ArticleView({ article, articles }: { article: BlogArticle; articles: Bl
       <section className="bg-[#f2f1ee] py-14 text-[#0d0d0d] md:py-24">
         <div className="mx-auto grid w-[min(1200px,calc(100vw-32px))] gap-12 lg:grid-cols-[minmax(0,760px)_260px] lg:items-start lg:gap-20">
           <article className="min-w-0">
-            <ArticleCover article={article} />
             <div className="mt-12 space-y-12 md:mt-16 md:space-y-14">
               {article.sections.map((section) => (
                 <section key={section.heading} id={sectionId(section.heading)} className="scroll-mt-28">

@@ -173,8 +173,4 @@ body {
   .blog-card:hover {
     transform: none !important;
   }
-
-  .blog-card:hover img {
-    transform: none !important;
-  }
 }
